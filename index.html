@@ -64,7 +64,7 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 .ch:hover { background: #151515; border-color: #0f0; color: #fff; }
 .ch.channel-active { background: #0f0 !important; color: #000 !important; border-color: #0f0 !important; box-shadow: 0 0 12px rgba(0,255,0,.45); }
 .ch.bein-ch { border-color: #c8a000; }
-.ch.bein-ch.channel-active { background: #c8a000 !important; border-color: #c8a000 !important; }
+.ch.bein-ch.channel-active { background: #c8a000 !important; border-color: #c8a000 !important; color: #000 !important; }
 .ch.thm-ch { border-color: #0af; }
 .ch.thm-ch.channel-active { background: #0af !important; border-color: #0af !important; color: #000 !important; }
 </style>
@@ -95,7 +95,8 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
     </div>
   </div>
   <div id="ch-rows">
-    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">beIN</span><span class="lbl">١</span></div><div class="row-scroll" id="row-bein"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">HD</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-hd"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">SD</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-sd"></div></div>
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">ثمانية</span><span class="lbl">٢</span></div><div class="row-scroll" id="row-thm"></div></div>
   </div>
 </div>
@@ -105,36 +106,39 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 var LOGO_BEIN = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png';
 var LOGO_THM = 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Thmanyah_Logo.svg';
 
-var BEIN_CH = [
-  { n: 'beIN 7 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 1 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/4.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 2 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/5.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 3 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/6.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 4 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/7.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 5 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/8.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 6 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/9.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 7',     u: 'https://kid.mamganjo.workers.dev/api/stream/10.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 8',     u: 'https://kid.mamganjo.workers.dev/api/stream/11.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 3 420', u: 'https://kid.mamganjo.workers.dev/api/stream/45.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 4 360', u: 'https://kid.mamganjo.workers.dev/api/stream/27.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 5 360', u: 'https://kid.mamganjo.workers.dev/api/stream/28.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 6 360', u: 'https://kid.mamganjo.workers.dev/api/stream/29.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 7 360', u: 'https://kid.mamganjo.workers.dev/api/stream/30.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 8 360', u: 'https://kid.mamganjo.workers.dev/api/stream/31.m3u8', t: 'hls', logo: LOGO_BEIN }
+var BEIN_HD = [
+  { n: 'beIN 7 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 1 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/4.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/5.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/6.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/7.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/8.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/9.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7',    u: 'https://kid.mamganjo.workers.dev/api/stream/10.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8',    u: 'https://kid.mamganjo.workers.dev/api/stream/11.m3u8', t: 'hls', logo: LOGO_BEIN }
 ];
 
+var BEIN_SD = [
+  { n: 'beIN 3 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/45.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/27.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/28.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/29.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/30.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/31.m3u8', t: 'hls', logo: LOGO_BEIN }
+];
+
+var PROXY = 'https://my-proxy.alameeeretv.workers.dev/?url=';
+
 var THM_CH = [
-  { n: 'ثمانية HD1', u: 'https://blcco.linkip.org/live/3453_.m3u8', t: 'hls', logo: LOGO_THM },
-  { n: 'ثمانية HD2', u: 'https://blcco.linkip.org/live/3454_.m3u8', t: 'hls', logo: LOGO_THM },
-  { n: 'ثمانية HD3', u: 'https://blcco.linkip.org/live/3455_.m3u8', t: 'hls', logo: LOGO_THM }
+  { n: 'ثمانية HD1', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3453_.m3u8'), t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD2', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3454_.m3u8'), t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD3', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3455_.m3u8'), t: 'hls', logo: LOGO_THM }
 ];
 
 (function () {
   var hls = null;
-  var cur = null;
   var retryT = null;
   var curPlayUrl = null;
-  var curPlayName = '';
   var retryCount = 0;
   var MAX_RETRIES = 3;
   var qBuilt = false;
@@ -389,7 +393,6 @@ var THM_CH = [
 
   function playChannel(url, name, node) {
     curPlayUrl = url;
-    curPlayName = name || '';
     chTitle.textContent = name || '';
     chTitle.style.display = 'block';
     setChannelActive(node || null);
@@ -464,7 +467,8 @@ var THM_CH = [
     qBtn.onclick = function (e) { e.stopPropagation(); qm.classList.toggle('open'); };
     document.addEventListener('click', function () { qm.classList.remove('open'); });
 
-    buildRow(BEIN_CH, 'row-bein', 'bein-ch');
+    buildRow(BEIN_HD, 'row-bein-hd', 'bein-ch');
+    buildRow(BEIN_SD, 'row-bein-sd', 'bein-ch');
     buildRow(THM_CH, 'row-thm', 'thm-ch');
 
     pw.addEventListener('touchstart', function (e) {
@@ -520,49 +524,4 @@ var THM_CH = [
         pw.classList.toggle('show-ctrl');
         clearTimeout(hCtrl);
         if (pw.classList.contains('show-ctrl')) {
-          hCtrl = setTimeout(function () { pw.classList.remove('show-ctrl'); }, 4000);
-        }
-      }, 280);
-    }
-
-    pw.addEventListener('touchend', function (e) {
-      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
-      if (isSwiping) return;
-      var now = Date.now();
-      if (now - lTap < 300 && now - lTap > 30) {
-        clearTimeout(dblT);
-        dblT = null;
-        e.preventDefault();
-        handleDoubleTap();
-        lTap = 0;
-        return;
-      }
-      lTap = now;
-      clearTimeout(dblT);
-      handleSingleTap();
-    }, { passive: false });
-
-    pw.addEventListener('click', function (e) {
-      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
-      if ('ontouchstart' in window) return;
-      var now = Date.now();
-      if (now - lTap < 300) {
-        clearTimeout(dblT);
-        dblT = null;
-        handleDoubleTap();
-        lTap = 0;
-      } else {
-        lTap = now;
-        clearTimeout(dblT);
-        handleSingleTap();
-      }
-    });
-
-    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
-  }
-
-  document.addEventListener('DOMContentLoaded', initUI);
-})();
-</script>
-</body>
-</html>
+          hCtrl = setTimeout(function () { pw.classList.remove('show-ctrl
