@@ -60,8 +60,11 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 .row-scroll::-webkit-scrollbar { height: 3px; }
 .row-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 .row-scroll, .ch { -webkit-user-select: none; user-select: none; }
-.ch { width: 100px; height: 55px; background: #fff; border: 2px solid #1a1a1a; border-radius: 8px; cursor: pointer; transition: .2s; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 0; }
-.ch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ch { width: 100px; height: 55px; background: #fff; border: 2px solid #1a1a1a; border-radius: 8px; cursor: pointer; transition: .2s; flex-shrink: 0; overflow: hidden; position: relative; padding: 0; }
+.ch img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ch .num { position: absolute; font-weight: 900; z-index: 3; pointer-events: none; text-shadow: 0 0 3px #000, 0 0 6px #000, 0 0 9px #000; }
+.ch.bein-ch .num { bottom: 2px; right: 4px; font-size: 14px; color: #fff; }
+.ch.thm-ch .num { bottom: 2px; right: 4px; font-size: 16px; color: #fff; background: rgba(0,0,0,.6); padding: 0 5px; border-radius: 4px; }
 .ch:hover { border-color: #0f0; box-shadow: 0 0 10px rgba(0,255,0,.4); }
 .ch.channel-active { border-color: #0f0 !important; box-shadow: 0 0 15px rgba(0,255,0,.8) !important; }
 .ch.bein-ch { border-color: #c8a000; }
@@ -105,35 +108,35 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
 <script>
 var LOGO_BEIN = 'https://www.sportspro.com/wp-content/uploads/2023/03/bein-edit-2.png';
-var LOGO_THM = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8jLHeKzEFgffdo_BR4FuhtVaXv380Vqi804zTQXdGCw&s=10';
+var LOGO_THM = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmxlys9pb5_N57XJfbMrgN0d4rbHwcKjIp3U4TOfYLBg&s=10';
 
 var BEIN_HD = [
-  { n: 'beIN 7 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 1 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/4.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 2 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/5.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 3 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/6.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 4 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/7.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 5 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/8.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 6 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/9.m3u8',  t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 7',    u: 'https://kid.mamganjo.workers.dev/api/stream/10.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 8',    u: 'https://kid.mamganjo.workers.dev/api/stream/11.m3u8', t: 'hls', logo: LOGO_BEIN }
+  { n: 'beIN 1 HD', num: '1', u: 'https://kid.mamganjo.workers.dev/api/stream/4.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 HD', num: '2', u: 'https://kid.mamganjo.workers.dev/api/stream/5.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 HD', num: '3', u: 'https://kid.mamganjo.workers.dev/api/stream/6.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 HD', num: '4', u: 'https://kid.mamganjo.workers.dev/api/stream/7.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 HD', num: '5', u: 'https://kid.mamganjo.workers.dev/api/stream/8.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 HD', num: '6', u: 'https://kid.mamganjo.workers.dev/api/stream/9.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 HD', num: '7', u: 'https://kid.mamganjo.workers.dev/api/stream/10.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 HD', num: '8', u: 'https://kid.mamganjo.workers.dev/api/stream/11.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 9 HD', num: '9', u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN }
 ];
 
 var BEIN_SD = [
-  { n: 'beIN 3 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/45.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 4 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/27.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 5 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/28.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 6 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/29.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 7 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/30.m3u8', t: 'hls', logo: LOGO_BEIN },
-  { n: 'beIN 8 SD', u: 'https://kid.mamganjo.workers.dev/api/stream/31.m3u8', t: 'hls', logo: LOGO_BEIN }
+  { n: 'beIN 3 SD', num: '3', u: 'https://kid.mamganjo.workers.dev/api/stream/45.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 SD', num: '4', u: 'https://kid.mamganjo.workers.dev/api/stream/27.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 SD', num: '5', u: 'https://kid.mamganjo.workers.dev/api/stream/28.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 SD', num: '6', u: 'https://kid.mamganjo.workers.dev/api/stream/29.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 SD', num: '7', u: 'https://kid.mamganjo.workers.dev/api/stream/30.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 SD', num: '8', u: 'https://kid.mamganjo.workers.dev/api/stream/31.m3u8', t: 'hls', logo: LOGO_BEIN }
 ];
 
 var PROXY = 'https://my-proxy.alameeeretv.workers.dev/?url=';
 
 var THM_CH = [
-  { n: 'ثمانية HD3', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3455_.m3u8'), t: 'hls', logo: LOGO_THM },
-  { n: 'ثمانية HD2', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3454_.m3u8'), t: 'hls', logo: LOGO_THM },
-  { n: 'ثمانية HD1', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3453_.m3u8'), t: 'hls', logo: LOGO_THM }
+  { n: 'ثمانية HD1', num: '1', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3453_.m3u8'), t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD2', num: '2', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3454_.m3u8'), t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD3', num: '3', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3455_.m3u8'), t: 'hls', logo: LOGO_THM }
 ];
 
 (function () {
@@ -439,6 +442,10 @@ var THM_CH = [
       img.src = ch.logo;
       img.alt = ch.n;
       btn.appendChild(img);
+      if (ch.num) {
+        var num = el('span', 'num', ch.num);
+        btn.appendChild(num);
+      }
       btn.title = ch.n;
       btn.onclick = function () { playChannel(ch.u, ch.n, btn); };
       box.appendChild(btn);
