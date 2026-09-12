@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>AlameeereTv</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+#app { display: flex; flex-direction: column; width: 100%; height: 100%; }
+#player-wrap { flex: 0 0 42%; min-height: 220px; position: relative; background: #000; overflow: hidden; }
+video { width: 100%; height: 100%; display: block; background: #000; }
+video.fc { object-fit: contain; }
+video.fv { object-fit: fill; }
+video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center; }
+#brand-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #000; z-index: 50; pointer-events: none; transition: opacity .5s; }
+#brand-overlay span { color: #fff; font-size: 28px; font-weight: 700; letter-spacing: 2px; animation: wave 2s ease-in-out infinite; }
+@keyframes wave { 0%,100% { transform: translateY(0); text-shadow: 0 0 10px rgba(0,255,0,.4); } 25% { transform: translateY(-8px); text-shadow: 0 0 24px rgba(0,255,0,.9); } 75% { transform: translateY(6px); text-shadow: 0 0 18px rgba(0,255,0,.6); } }
+#player-wrap.playing #brand-overlay { opacity: 0; z-index: -1; }
+#brand-overlay.loading { opacity: 1; z-index: 50; }
+#loader { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,.75); z-index: 10; }
+#loader .wt { color: #fff; font-size: 26px; font-weight: 700; letter-spacing: 2px; animation: wave 1.5s ease-in-out infinite; }
+#iframe-wrap { position: absolute; inset: 0; display: none; z-index: 5; }
+#iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+#brightness-layer { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 4; }
+#ch-title { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #fff; z-index: 6; display: none; }
+#speed-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.65); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #0f0; z-index: 6; transition: opacity .3s; cursor: pointer; user-select: none; }
+#speed-badge.hide { opacity: 0; pointer-events: none; }
+#dbl-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 15; opacity: 0; transition: opacity .3s; }
+#dbl-hint span { background: rgba(0,0,0,.75); color: #fff; font-size: 15px; padding: 12px 26px; border-radius: 22px; border: 1px solid rgba(255,255,255,.2); }
+#dbl-hint.show { opacity: 1; }
+#swipe-ind { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,.78); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; padding: 14px 22px; display: none; flex-direction: column; align-items: center; gap: 8px; z-index: 20; pointer-events: none; min-width: 130px; }
+#si-icon { font-size: 26px; }
+#si-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; }
+#si-bar { height: 100%; background: #0f0; border-radius: 3px; }
+#si-label { font-size: 12px; color: rgba(255,255,255,.75); }
+#controls-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(0,0,0,.92)); padding: 30px 8px 10px; display: flex; align-items: center; gap: 4px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 100; overflow: visible; }
+#player-wrap.show-ctrl #controls-overlay { opacity: 1; pointer-events: auto; }
+.cb { background: rgba(255,255,255,.12); border: none; color: #fff; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 11px; backdrop-filter: blur(6px); transition: .2s; white-space: nowrap; flex-shrink: 0; }
+.cb:hover { background: rgba(255,255,255,.28); }
+.cb.on { background: rgba(0,200,0,.2); color: #0f0; border: 1px solid rgba(0,255,0,.3); }
+#vw { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+#vs { -webkit-appearance: none; appearance: none; width: 48px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.3); outline: none; cursor: pointer; }
+#vs::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #0f0; cursor: pointer; }
+#fg { flex: 1; min-width: 2px; }
+#qw { position: relative; flex-shrink: 0; margin-left: 6px; }
+#qm { position: absolute; bottom: calc(100% + 8px); left: 0; background: rgba(10,10,10,.97); border: 1px solid #333; border-radius: 8px; display: none; flex-direction: column; min-width: 80px; max-height: 50vh; overflow-y: auto; z-index: 9999; box-shadow: 0 -4px 20px rgba(0,0,0,.8); }
+#qm.open { display: flex; }
+#qm button { background: none; border: none; color: #fff; padding: 6px 14px; cursor: pointer; text-align: center; font-size: 12px; }
+#qm button:hover { background: rgba(255,255,255,.08); }
+#qm button.active { color: #0f0; font-weight: 700; }
+#q-btn.manual { background: rgba(0,200,0,.2); color: #0f0; border: 1px solid rgba(0,255,0,.35); }
+#ch-rows { flex: 1 1 0; min-height: 0; background: #030303; border-top: 1px solid #111; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 2px 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.ch-row { flex-shrink: 0; display: flex; align-items: center; border-bottom: 1px solid #0a0a0a; padding: 2px 0; }
+.row-label { flex-shrink: 0; width: 50px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: #050505; border-left: 1px solid #111; }
+.row-label .ico { font-size: 14px; }
+.row-label .ico-sm { font-size: 9px; }
+.row-label .lbl { font-size: 8px; color: #666; font-weight: 700; }
+.row-scroll { flex: 1; min-width: 0; display: flex; gap: 4px; padding: 4px; overflow-x: auto; overflow-y: hidden; align-items: center; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: thin; }
+.row-scroll::-webkit-scrollbar { height: 3px; }
+.row-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+.row-scroll, .ch { -webkit-user-select: none; user-select: none; }
+.ch { min-width: 70px; height: 45px; background: #0a0a0a; border: 1px solid #1a1a1a; color: #bbb; font-size: 10px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: .2s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; }
+.ch:hover { background: #151515; border-color: #0f0; color: #fff; }
+.ch.channel-active { background: #0f0 !important; color: #000 !important; border-color: #0f0 !important; box-shadow: 0 0 12px rgba(0,255,0,.45); }
+.ch.bein-ch { border-color: #c8a000; }
+.ch.bein-ch.channel-active { background: #c8a000 !important; border-color: #c8a000 !important; }
+.ch.thm-ch { border-color: #0af; }
+.ch.thm-ch.channel-active { background: #0af !important; border-color: #0af !important; color: #000 !important; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="player-wrap">
+    <video id="vid" class="fc" playsinline webkit-playsinline></video>
+    <div id="brand-overlay"><span>AlameeereTv</span></div>
+    <div id="iframe-wrap"><iframe id="iframe-player" allowfullscreen allow="autoplay;encrypted-media;fullscreen" sandbox="allow-scripts allow-presentation" referrerpolicy="no-referrer"></iframe></div>
+    <div id="brightness-layer"></div>
+    <div id="loader"><div class="wt">AlameeereTv</div></div>
+    <div id="ch-title"></div>
+    <div id="speed-badge">📡 السرعة</div>
+    <div id="swipe-ind"><div id="si-icon">🔊</div><div id="si-bar-bg"><div id="si-bar" style="width:100%"></div></div><div id="si-label">الصوت</div></div>
+    <div id="dbl-hint"><span id="dbl-txt">⛶</span></div>
+    <div id="controls-overlay">
+      <button type="button" class="cb" id="play-btn">⏯</button>
+      <div id="vw"><button type="button" class="cb" id="mute-btn">🔊</button><input type="range" id="vs" min="0" max="1" step=".05" value="1"></div>
+      <button type="button" class="cb" id="skip-back-btn">⏪</button>
+      <button type="button" class="cb" id="skip-fwd-btn">⏩</button>
+      <button type="button" class="cb" id="fit-btn">↕ عادي</button>
+      <button type="button" class="cb" id="spd-btn">📡</button>
+      <button type="button" class="cb" id="fs-btn">⛶</button>
+      <div id="fg"></div>
+      <button type="button" class="cb" id="reload-btn">🔄</button>
+      <div id="qw"><button type="button" class="cb" id="q-btn">جودة</button><div id="qm"></div></div>
+    </div>
+  </div>
+  <div id="ch-rows">
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">beIN</span><span class="lbl">١</span></div><div class="row-scroll" id="row-bein"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">ثمانية</span><span class="lbl">٢</span></div><div class="row-scroll" id="row-thm"></div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
+<script>
+var LOGO_BEIN = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png';
+var LOGO_THM = 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Thmanyah_Logo.svg';
+
+var BEIN_CH = [
+  { n: 'beIN 7 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 1 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/4.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/5.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/6.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/7.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/8.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 HD',  u: 'https://kid.mamganjo.workers.dev/api/stream/9.m3u8',  t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7',     u: 'https://kid.mamganjo.workers.dev/api/stream/10.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8',     u: 'https://kid.mamganjo.workers.dev/api/stream/11.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 420', u: 'https://kid.mamganjo.workers.dev/api/stream/45.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 360', u: 'https://kid.mamganjo.workers.dev/api/stream/27.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 360', u: 'https://kid.mamganjo.workers.dev/api/stream/28.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 360', u: 'https://kid.mamganjo.workers.dev/api/stream/29.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 360', u: 'https://kid.mamganjo.workers.dev/api/stream/30.m3u8', t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 360', u: 'https://kid.mamganjo.workers.dev/api/stream/31.m3u8', t: 'hls', logo: LOGO_BEIN }
+];
+
+var THM_CH = [
+  { n: 'ثمانية HD1', u: 'https://blcco.linkip.org/live/3453_.m3u8', t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD2', u: 'https://blcco.linkip.org/live/3454_.m3u8', t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD3', u: 'https://blcco.linkip.org/live/3455_.m3u8', t: 'hls', logo: LOGO_THM }
+];
+
+(function () {
+  var hls = null;
+  var cur = null;
+  var retryT = null;
+  var curPlayUrl = null;
+  var curPlayName = '';
+  var retryCount = 0;
+  var MAX_RETRIES = 3;
+  var qBuilt = false;
+
+  var vid = document.getElementById('vid');
+  var ifw = document.getElementById('iframe-wrap');
+  var ifp = document.getElementById('iframe-player');
+  var qm = document.getElementById('qm');
+  var qBtn = document.getElementById('q-btn');
+  var loader = document.getElementById('loader');
+  var chTitle = document.getElementById('ch-title');
+  var dblHint = document.getElementById('dbl-hint');
+  var dblTxt = document.getElementById('dbl-txt');
+  var swInd = document.getElementById('swipe-ind');
+  var siIcon = document.getElementById('si-icon');
+  var siBar = document.getElementById('si-bar');
+  var siLabel = document.getElementById('si-label');
+  var brightL = document.getElementById('brightness-layer');
+  var pw = document.getElementById('player-wrap');
+  var chRows = document.getElementById('ch-rows');
+  var fitBtn = document.getElementById('fit-btn');
+  var speedBadge = document.getElementById('speed-badge');
+  var spdBtn = document.getElementById('spd-btn');
+  var brandOverlay = document.getElementById('brand-overlay');
+  var muteBtn = document.getElementById('mute-btn');
+  var volSlider = document.getElementById('vs');
+
+  var brightness = parseFloat(localStorage.getItem('brightness') || '0');
+  brightL.style.opacity = brightness;
+
+  var ASPECTS = [
+    { cls: 'fc', lbl: '↕ عادي' },
+    { cls: 'fv', lbl: '⛶ ملء' },
+    { cls: 'ff', lbl: '↔ مفيد' }
+  ];
+  var aIdx = parseInt(localStorage.getItem('aIdx') || '0', 10);
+
+  var speedOn = localStorage.getItem('speedOn') !== '0';
+  var isTesting = false;
+  var spInt = null;
+  var uIdx = 0;
+  var TU = [
+    'https://httpbin.org/bytes/200000',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/240px-PNG_transparency_demonstration_1.png'
+  ];
+
+  var swT = null;
+  var swSV = 0;
+  var swTm = null;
+  var isSwiping = false;
+  var tyS = 0;
+  var lTap = 0;
+  var dblT = null;
+  var dblHT = null;
+  var hCtrl = null;
+
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function clearChannelActive() {
+    $all('.ch.channel-active').forEach(function (node) { node.classList.remove('channel-active'); });
+  }
+
+  function setChannelActive(node) {
+    clearChannelActive();
+    if (node) node.classList.add('channel-active');
+  }
+
+  function channelLoading() {
+    brandOverlay.classList.add('loading');
+    brandOverlay.style.opacity = '1';
+    brandOverlay.style.zIndex = '50';
+  }
+
+  function channelWorking() {
+    brandOverlay.classList.remove('loading');
+    brandOverlay.style.opacity = '0';
+    brandOverlay.style.zIndex = '-1';
+    pw.classList.add('playing');
+  }
+
+  function applyAspect(i) {
+    vid.className = ASPECTS[i].cls;
+    fitBtn.textContent = ASPECTS[i].lbl;
+    fitBtn.classList.toggle('on', i !== 0);
+    localStorage.setItem('aIdx', i);
+  }
+
+  function cycleAspect() {
+    aIdx = (aIdx + 1) % 3;
+    applyAspect(aIdx);
+  }
+
+  function doFullscreen() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      setFUI(false);
+      return;
+    }
+    var root = document.documentElement;
+    var req = root.requestFullscreen ? root.requestFullscreen() : root.webkitRequestFullscreen ? root.webkitRequestFullscreen() : null;
+    Promise.resolve(req).then(function () {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(function () {});
+      }
+      setFUI(true);
+    }).catch(function () { setFUI(true); });
+  }
+
+  function setFUI(full) {
+    chRows.style.display = full ? 'none' : 'flex';
+    if (!full && screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
+  }
+
+  function runSpeedTest() {
+    if (isTesting) return;
+    isTesting = true;
+    speedBadge.textContent = '📡 ...';
+    var url = TU[uIdx % TU.length] + '?r=' + Date.now();
+    var t0 = Date.now();
+    fetch(url, { cache: 'no-store' })
+      .then(function (res) { return res.blob(); })
+      .then(function (blob) {
+        showSpeed(((blob.size || 200000) * 8) / ((Date.now() - t0) / 1000));
+        isTesting = false;
+      })
+      .catch(function () { uIdx += 1; isTesting = false; });
+  }
+
+  function showSpeed(bits) {
+    speedBadge.textContent = bits >= 1e6
+      ? '📡 ' + (bits / 1e6).toFixed(1) + ' Mbps'
+      : '📡 ' + Math.round(bits / 1000) + ' Kbps';
+    speedBadge.style.color = bits >= 1e7 ? '#0f0' : bits >= 2e6 ? '#ff0' : bits >= 5e5 ? '#f80' : '#f44';
+  }
+
+  function applySpeedVis() {
+    speedBadge.classList.toggle('hide', !speedOn);
+    spdBtn.classList.toggle('on', speedOn);
+    if (speedOn) {
+      if (!spInt) { runSpeedTest(); spInt = setInterval(runSpeedTest, 15000); }
+    } else if (spInt) { clearInterval(spInt); spInt = null; }
+  }
+
+  function toggleSpeed() {
+    speedOn = !speedOn;
+    localStorage.setItem('speedOn', speedOn ? '1' : '0');
+    applySpeedVis();
+  }
+
+  function showLoader() { loader.style.display = 'flex'; }
+  function hideLoader() { loader.style.display = 'none'; }
+
+  function reloadCurrentStream() {
+    if (curPlayUrl) startHls(curPlayUrl);
+  }
+
+  function destroyHls() {
+    if (!hls) return;
+    hls.destroy();
+    hls = null;
+  }
+
+  function startHls(url) {
+    retryCount = 0;
+    qBuilt = false;
+    channelLoading();
+    vid.style.display = 'block';
+    ifw.style.display = 'none';
+    ifp.src = '';
+    showLoader();
+    destroyHls();
+    vid.removeAttribute('src');
+    vid.load();
+
+    var started = false;
+
+    function onStarted() {
+      if (started) return;
+      started = true;
+      retryCount = 0;
+      clearTimeout(retryT);
+      retryT = null;
+      hideLoader();
+      channelWorking();
+    }
+
+    if (Hls.isSupported()) {
+      hls = new Hls({
+        enableWorker: true,
+        startLevel: -1,
+        autoStartLoad: true,
+        capLevelToPlayerSize: false,
+        maxBufferLength: 10,
+        maxMaxBufferLength: 30,
+        manifestLoadingMaxRetry: 3,
+        fragLoadingMaxRetry: 3,
+        liveSyncDurationCount: 2,
+        lowLatencyMode: true,
+        backBufferLength: 30
+      });
+      hls.loadSource(url);
+      hls.attachMedia(vid);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        if (!qBuilt) { buildQ(); qBuilt = true; }
+        vid.play().catch(function () {});
+      });
+
+      hls.on(Hls.Events.FRAG_BUFFERED, onStarted);
+
+      hls.on(Hls.Events.ERROR, function (e, d) {
+        if (!d || !d.fatal) return;
+        if (d.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          try { hls.recoverMediaError(); } catch (err) {}
+          return;
+        }
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          if (!started) {
+            try { hls.startLoad(); } catch (err) {}
+          } else {
+            if (retryCount++ >= MAX_RETRIES) return;
+            showLoader();
+            clearTimeout(retryT);
+            retryT = setTimeout(reloadCurrentStream, 5000);
+          }
+          return;
+        }
+        if (started) {
+          if (retryCount++ >= MAX_RETRIES) return;
+          clearTimeout(retryT);
+          retryT = setTimeout(reloadCurrentStream, 5000);
+        }
+      });
+      return;
+    }
+
+    if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+      vid.src = url;
+      vid.addEventListener('loadeddata', onStarted, { once: true });
+      vid.play().catch(function () {});
+    }
+  }
+
+  function playChannel(url, name, node) {
+    curPlayUrl = url;
+    curPlayName = name || '';
+    chTitle.textContent = name || '';
+    chTitle.style.display = 'block';
+    setChannelActive(node || null);
+    startHls(url);
+  }
+
+  function buildQ() {
+    qm.innerHTML = '';
+    var btnAuto = el('button', 'active', 'تلقائي');
+    btnAuto.onclick = function () {
+      if (hls) hls.currentLevel = -1;
+      qBtn.classList.remove('manual');
+      qBtn.textContent = 'جودة';
+      $all('button', qm).forEach(function (b) { b.classList.remove('active'); });
+      btnAuto.classList.add('active');
+      qm.classList.remove('open');
+    };
+    qm.appendChild(btnAuto);
+
+    if (!hls || !hls.levels) return;
+    hls.levels.forEach(function (lv, idx) {
+      var name = lv.height ? lv.height + 'p' : 'جودة ' + (idx + 1);
+      var b = el('button', '', name);
+      b.onclick = function () {
+        if (hls) hls.currentLevel = idx;
+        qBtn.classList.add('manual');
+        qBtn.textContent = name;
+        $all('button', qm).forEach(function (btn) { btn.classList.remove('active'); });
+        b.classList.add('active');
+        qm.classList.remove('open');
+      };
+      qm.appendChild(b);
+    });
+  }
+
+  function buildRow(channels, boxId, extraCls) {
+    var box = document.getElementById(boxId);
+    if (!box) return;
+    box.innerHTML = '';
+    channels.forEach(function (ch) {
+      var btn = el('button', 'ch' + (extraCls ? ' ' + extraCls : ''), ch.n);
+      btn.onclick = function () { playChannel(ch.u, ch.n, btn); };
+      box.appendChild(btn);
+    });
+  }
+
+  function initUI() {
+    applyAspect(aIdx);
+    applySpeedVis();
+
+    vid.addEventListener('play', function () {
+      $('#play-btn').textContent = '⏸';
+      channelWorking();
+    });
+    vid.addEventListener('pause', function () { $('#play-btn').textContent = '▶'; });
+    vid.addEventListener('volumechange', function () {
+      volSlider.value = vid.muted ? 0 : vid.volume;
+      muteBtn.textContent = (vid.muted || vid.volume === 0) ? '🔇' : '🔊';
+    });
+
+    $('#play-btn').onclick = function () { if (vid.paused) vid.play(); else vid.pause(); };
+    muteBtn.onclick = function () { vid.muted = !vid.muted; };
+    volSlider.oninput = function () { vid.volume = parseFloat(this.value); vid.muted = (vid.volume === 0); };
+    $('#skip-back-btn').onclick = function () { vid.currentTime = Math.max(0, vid.currentTime - 10); };
+    $('#skip-fwd-btn').onclick = function () { vid.currentTime += 10; };
+    fitBtn.onclick = cycleAspect;
+    spdBtn.onclick = toggleSpeed;
+    speedBadge.onclick = runSpeedTest;
+    $('#fs-btn').onclick = doFullscreen;
+    $('#reload-btn').onclick = reloadCurrentStream;
+
+    qBtn.onclick = function (e) { e.stopPropagation(); qm.classList.toggle('open'); };
+    document.addEventListener('click', function () { qm.classList.remove('open'); });
+
+    buildRow(BEIN_CH, 'row-bein', 'bein-ch');
+    buildRow(THM_CH, 'row-thm', 'thm-ch');
+
+    pw.addEventListener('touchstart', function (e) {
+      if (e.touches.length === 1) {
+        swT = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        isSwiping = false;
+        var rect = pw.getBoundingClientRect();
+        tyS = (swT.x - rect.left < rect.width / 2) ? 'bright' : 'vol';
+        swSV = (tyS === 'bright') ? brightness : vid.volume;
+      }
+    }, { passive: true });
+
+    pw.addEventListener('touchmove', function (e) {
+      if (!swT || e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - swT.x;
+      var dy = e.touches[0].clientY - swT.y;
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) {
+        isSwiping = true;
+        var delta = -dy / 150;
+        if (tyS === 'bright') {
+          brightness = Math.min(0.85, Math.max(0, swSV + delta));
+          brightL.style.opacity = brightness;
+          localStorage.setItem('brightness', brightness);
+          siIcon.textContent = '☀️';
+          siBar.style.width = Math.round((1 - brightness / 0.85) * 100) + '%';
+          siLabel.textContent = 'السطوع';
+        } else {
+          var nv = Math.min(1, Math.max(0, swSV + delta));
+          vid.volume = nv;
+          volSlider.value = nv;
+          siIcon.textContent = nv === 0 ? '🔇' : '🔊';
+          siBar.style.width = Math.round(nv * 100) + '%';
+          siLabel.textContent = 'الصوت';
+        }
+        swInd.style.display = 'flex';
+        clearTimeout(swTm);
+        swTm = setTimeout(function () { swInd.style.display = 'none'; }, 1000);
+      }
+    }, { passive: true });
+
+    pw.addEventListener('touchend', function () { swT = null; });
+
+    function handleDoubleTap() {
+      doFullscreen();
+      dblTxt.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? 'Exit' : '⛶';
+      dblHint.classList.add('show');
+      clearTimeout(dblHT);
+      dblHT = setTimeout(function () { dblHint.classList.remove('show'); }, 600);
+    }
+
+    function handleSingleTap() {
+      dblT = setTimeout(function () {
+        pw.classList.toggle('show-ctrl');
+        clearTimeout(hCtrl);
+        if (pw.classList.contains('show-ctrl')) {
+          hCtrl = setTimeout(function () { pw.classList.remove('show-ctrl'); }, 4000);
+        }
+      }, 280);
+    }
+
+    pw.addEventListener('touchend', function (e) {
+      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
+      if (isSwiping) return;
+      var now = Date.now();
+      if (now - lTap < 300 && now - lTap > 30) {
+        clearTimeout(dblT);
+        dblT = null;
+        e.preventDefault();
+        handleDoubleTap();
+        lTap = 0;
+        return;
+      }
+      lTap = now;
+      clearTimeout(dblT);
+      handleSingleTap();
+    }, { passive: false });
+
+    pw.addEventListener('click', function (e) {
+      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
+      if ('ontouchstart' in window) return;
+      var now = Date.now();
+      if (now - lTap < 300) {
+        clearTimeout(dblT);
+        dblT = null;
+        handleDoubleTap();
+        lTap = 0;
+      } else {
+        lTap = now;
+        clearTimeout(dblT);
+        handleSingleTap();
+      }
+    });
+
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  }
+
+  document.addEventListener('DOMContentLoaded', initUI);
+})();
+</script>
+</body>
+</html>
