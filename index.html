@@ -56,17 +56,18 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 .row-label .ico { font-size: 14px; }
 .row-label .ico-sm { font-size: 9px; }
 .row-label .lbl { font-size: 8px; color: #666; font-weight: 700; }
-.row-scroll { flex: 1; min-width: 0; display: flex; gap: 4px; padding: 4px; overflow-x: auto; overflow-y: hidden; align-items: center; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: thin; }
+.row-scroll { flex: 1; min-width: 0; display: flex; gap: 6px; padding: 4px; overflow-x: auto; overflow-y: hidden; align-items: center; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: thin; }
 .row-scroll::-webkit-scrollbar { height: 3px; }
 .row-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 .row-scroll, .ch { -webkit-user-select: none; user-select: none; }
-.ch { min-width: 70px; height: 45px; background: #0a0a0a; border: 1px solid #1a1a1a; color: #bbb; font-size: 10px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: .2s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; }
-.ch:hover { background: #151515; border-color: #0f0; color: #fff; }
-.ch.channel-active { background: #0f0 !important; color: #000 !important; border-color: #0f0 !important; box-shadow: 0 0 12px rgba(0,255,0,.45); }
+.ch { width: 100px; height: 55px; background: #fff; border: 2px solid #1a1a1a; border-radius: 8px; cursor: pointer; transition: .2s; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 0; }
+.ch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ch:hover { border-color: #0f0; box-shadow: 0 0 10px rgba(0,255,0,.4); }
+.ch.channel-active { border-color: #0f0 !important; box-shadow: 0 0 15px rgba(0,255,0,.8) !important; }
 .ch.bein-ch { border-color: #c8a000; }
-.ch.bein-ch.channel-active { background: #c8a000 !important; border-color: #c8a000 !important; color: #000 !important; }
+.ch.bein-ch.channel-active { border-color: #c8a000 !important; box-shadow: 0 0 15px rgba(200,160,0,.9) !important; }
 .ch.thm-ch { border-color: #0af; }
-.ch.thm-ch.channel-active { background: #0af !important; border-color: #0af !important; color: #000 !important; }
+.ch.thm-ch.channel-active { border-color: #0af !important; box-shadow: 0 0 15px rgba(0,170,255,.9) !important; }
 </style>
 </head>
 <body>
@@ -103,8 +104,8 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
 <script>
-var LOGO_BEIN = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png';
-var LOGO_THM = 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Thmanyah_Logo.svg';
+var LOGO_BEIN = 'https://www.sportspro.com/wp-content/uploads/2023/03/bein-edit-2.png';
+var LOGO_THM = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8jLHeKzEFgffdo_BR4FuhtVaXv380Vqi804zTQXdGCw&s=10';
 
 var BEIN_HD = [
   { n: 'beIN 7 HD', u: 'https://kid.mamganjo.workers.dev/api/stream/2.m3u8',  t: 'hls', logo: LOGO_BEIN },
@@ -130,9 +131,9 @@ var BEIN_SD = [
 var PROXY = 'https://my-proxy.alameeeretv.workers.dev/?url=';
 
 var THM_CH = [
-  { n: 'ثمانية HD1', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3453_.m3u8'), t: 'hls', logo: LOGO_THM },
+  { n: 'ثمانية HD3', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3455_.m3u8'), t: 'hls', logo: LOGO_THM },
   { n: 'ثمانية HD2', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3454_.m3u8'), t: 'hls', logo: LOGO_THM },
-  { n: 'ثمانية HD3', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3455_.m3u8'), t: 'hls', logo: LOGO_THM }
+  { n: 'ثمانية HD1', u: PROXY + encodeURIComponent('https://blcco.linkip.org/live/3453_.m3u8'), t: 'hls', logo: LOGO_THM }
 ];
 
 (function () {
@@ -433,7 +434,12 @@ var THM_CH = [
     if (!box) return;
     box.innerHTML = '';
     channels.forEach(function (ch) {
-      var btn = el('button', 'ch' + (extraCls ? ' ' + extraCls : ''), ch.n);
+      var btn = el('button', 'ch' + (extraCls ? ' ' + extraCls : ''));
+      var img = el('img');
+      img.src = ch.logo;
+      img.alt = ch.n;
+      btn.appendChild(img);
+      btn.title = ch.n;
       btn.onclick = function () { playChannel(ch.u, ch.n, btn); };
       box.appendChild(btn);
     });
