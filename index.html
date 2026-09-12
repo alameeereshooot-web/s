@@ -524,4 +524,49 @@ var THM_CH = [
         pw.classList.toggle('show-ctrl');
         clearTimeout(hCtrl);
         if (pw.classList.contains('show-ctrl')) {
-          hCtrl = setTimeout(function () { pw.classList.remove('show-ctrl
+          hCtrl = setTimeout(function () { pw.classList.remove('show-ctrl'); }, 4000);
+        }
+      }, 280);
+    }
+
+    pw.addEventListener('touchend', function (e) {
+      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
+      if (isSwiping) return;
+      var now = Date.now();
+      if (now - lTap < 300 && now - lTap > 30) {
+        clearTimeout(dblT);
+        dblT = null;
+        e.preventDefault();
+        handleDoubleTap();
+        lTap = 0;
+        return;
+      }
+      lTap = now;
+      clearTimeout(dblT);
+      handleSingleTap();
+    }, { passive: false });
+
+    pw.addEventListener('click', function (e) {
+      if (e.target.closest('#controls-overlay') || e.target.closest('#speed-badge')) return;
+      if ('ontouchstart' in window) return;
+      var now = Date.now();
+      if (now - lTap < 300) {
+        clearTimeout(dblT);
+        dblT = null;
+        handleDoubleTap();
+        lTap = 0;
+      } else {
+        lTap = now;
+        clearTimeout(dblT);
+        handleSingleTap();
+      }
+    });
+
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  }
+
+  document.addEventListener('DOMContentLoaded', initUI);
+})();
+</script>
+</body>
+</html>
