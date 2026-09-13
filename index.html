@@ -105,6 +105,11 @@ video.ff { object-fit: contain; transform: scaleY(.72); transform-origin: center
   <div id="ch-rows">
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">HD</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-hd"></div></div>
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">SD</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-sd"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">HEVC</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-hevc"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">720</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-720"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">540</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-540"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">XTRA</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-xtra"></div></div>
+    <div class="ch-row"><div class="row-label"><span class="ico ico-sm">News</span><span class="lbl">beIN</span></div><div class="row-scroll" id="row-bein-news"></div></div>
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">ثمانية</span><span class="lbl">٢</span></div><div class="row-scroll" id="row-thm"></div></div>
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">ألوان</span><span class="lbl">رياضة</span></div><div class="row-scroll" id="row-alwan-sport"></div></div>
     <div class="ch-row"><div class="row-label"><span class="ico ico-sm">ألوان</span><span class="lbl">عام</span></div><div class="row-scroll" id="row-alwan-general"></div></div>
@@ -128,6 +133,7 @@ var LOGO_ALWAN = 'https://alwansports.com/wp-content/uploads/2026/07/%D8%A7%D9%8
 var LOGO_SHAHSA = 'https://pbs.twimg.com/media/G0rnBv4XkAEABrD.jpg';
 var LOGO_SERIE_A = 'https://yt3.googleusercontent.com/P6-j-BhBr5l1RcjrU58VaDVZv91wJAGm4H_DWaDs8yZWDXLlcmg_Ro-UfME94PHmAmxSqEweCg=s900-c-k-c0x00ffffff-no-rj';
 var LOGO_STARZPLAY = 'https://ar.esquireme.com/cloud/2022/09/11/STARZPLAYSPORTSY2022M-landscape-poster-v1.jpg';
+var LOGO_ALWAN_GEN = 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg';
 
 // ======================== beIN HD ========================
 var BEIN_HD = [
@@ -151,6 +157,57 @@ var BEIN_SD = [
   { n: 'beIN 5 SD', num: '5', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212354.m3u8'), t: 'hls', logo: LOGO_BEIN },
   { n: 'beIN 6 SD', num: '6', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212355.m3u8'), t: 'hls', logo: LOGO_BEIN },
   { n: 'beIN 7 SD', num: '7', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212356.m3u8'), t: 'hls', logo: LOGO_BEIN }
+];
+
+// ======================== beIN HEVC ========================
+var BEIN_HEVC = [
+  { n: 'beIN 1 HEVC', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212313.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 HEVC', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212314.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 HEVC', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212316.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 HEVC', num: '4', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212317.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 HEVC', num: '5', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212318.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 HEVC', num: '6', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212319.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 HEVC', num: '7', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212320.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 HEVC', num: '8', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212321.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 9 HEVC', num: '9', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212322.m3u8'), t: 'hls', logo: LOGO_BEIN }
+];
+
+// ======================== beIN 720 ========================
+var BEIN_720 = [
+  { n: 'beIN 1 720', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212337.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 720', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212338.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 720', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212340.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 720', num: '4', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212341.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 720', num: '5', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212342.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 720', num: '6', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212343.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 720', num: '7', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212344.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 8 720', num: '8', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212345.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 9 720', num: '9', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212346.m3u8'), t: 'hls', logo: LOGO_BEIN }
+];
+
+// ======================== beIN 540 ========================
+var BEIN_540 = [
+  { n: 'beIN 1 540', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212349.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 2 540', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212350.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 3 540', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212352.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 4 540', num: '4', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212353.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 5 540', num: '5', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212354.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 6 540', num: '6', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212355.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN 7 540', num: '7', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212356.m3u8'), t: 'hls', logo: LOGO_BEIN }
+];
+
+// ======================== beIN XTRA ========================
+var BEIN_XTRA = [
+  { n: 'beIN XTRA 1 HD', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/653845.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN XTRA 2 HD', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/653844.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN XTRA 3 HD', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/653843.m3u8'), t: 'hls', logo: LOGO_BEIN }
+];
+
+// ======================== beIN News/NBA ========================
+var BEIN_NEWS = [
+  { n: 'beIN News', num: 'N', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212312.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN NBA', num: 'NBA', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212310.m3u8'), t: 'hls', logo: LOGO_BEIN },
+  { n: 'beIN Free', num: 'F', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/212311.m3u8'), t: 'hls', logo: LOGO_BEIN }
 ];
 
 // ======================== ثمانية ========================
@@ -200,19 +257,19 @@ var ALWAN_SPORT = [
 
 // ======================== ألوان عام ========================
 var ALWAN_GENERAL = [
-  { n: 'ألوان أفلام 1', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738869.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أفلام 2', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738868.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أفلام 3', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738867.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أفلام 4', num: '4', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738866.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أغاني', num: 'G', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738861.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان وثائقي', num: 'D', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738864.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أنيمي', num: 'A', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738857.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان أطفال', num: 'K', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738863.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان بوليوود', num: 'B', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738860.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان كوريا', num: 'K', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738859.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان مسلسلات', num: 'M', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738862.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان مسلسلات+', num: '+', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738858.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' },
-  { n: 'ألوان تركيا', num: 'T', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738865.m3u8'), t: 'hls', logo: 'https://pbs.twimg.com/profile_images/569587975650951168/AAM7ufB0_400x400.jpeg' }
+  { n: 'ألوان أفلام 1', num: '1', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738869.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أفلام 2', num: '2', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738868.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أفلام 3', num: '3', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738867.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أفلام 4', num: '4', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738866.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أغاني', num: 'G', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738861.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان وثائقي', num: 'D', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738864.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أنيمي', num: 'A', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738857.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان أطفال', num: 'K', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738863.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان بوليوود', num: 'B', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738860.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان كوريا', num: 'K', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738859.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان مسلسلات', num: 'M', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738862.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان مسلسلات+', num: '+', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738858.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN },
+  { n: 'ألوان تركيا', num: 'T', u: proxied('http://vip2.sharkhost.xyz:80/live/9143315182/7352465335/738865.m3u8'), t: 'hls', logo: LOGO_ALWAN_GEN }
 ];
 
 // ======================== رياضة متنوع ========================
@@ -576,6 +633,11 @@ var SPORTS_MISC = [
     // بناء الصفوف
     buildRow(BEIN_HD, 'row-bein-hd', 'bein-ch');
     buildRow(BEIN_SD, 'row-bein-sd', 'bein-ch');
+    buildRow(BEIN_HEVC, 'row-bein-hevc', 'bein-ch');
+    buildRow(BEIN_720, 'row-bein-720', 'bein-ch');
+    buildRow(BEIN_540, 'row-bein-540', 'bein-ch');
+    buildRow(BEIN_XTRA, 'row-bein-xtra', 'bein-ch');
+    buildRow(BEIN_NEWS, 'row-bein-news', 'bein-ch');
     buildRow(THM_CH, 'row-thm', 'thm-ch');
     buildRow(ALWAN_SPORT, 'row-alwan-sport', 'alwan-ch');
     buildRow(ALWAN_GENERAL, 'row-alwan-general', 'alwan-ch');
