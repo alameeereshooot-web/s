@@ -210,7 +210,6 @@
             <div class="ch-row"><div class="row-label"><span class="ico">📺</span><span class="lbl">أخبار</span></div><div class="row-scroll" id="row-2"></div></div>
             <div class="ch-row"><div class="row-label"><span class="ico">🎬</span><span class="lbl">منوعات</span></div><div class="row-scroll" id="row-3"></div></div>
             <div class="ch-row"><div class="row-label"><span class="ico">⚽</span><span class="lbl">رياضة</span></div><div class="row-scroll" id="row-4"></div></div>
-            <div class="ch-row"><div class="row-label"><span class="ico">🏆</span><span class="lbl">وقت اللعب</span></div><div class="row-scroll" id="row-5"></div></div>
             <div class="ch-row"><div class="row-label"><span class="ico">🎭</span><span class="lbl">ترفيه</span></div><div class="row-scroll" id="row-6"></div></div>
             <div class="ch-row"><div class="row-label"><span class="ico">🌅</span><span class="lbl">الفجر</span></div><div class="row-scroll" id="row-7"></div></div>
             <div class="ch-row"><div class="row-label"><span class="ico">📡</span><span class="lbl">ثمانية سبورت</span></div><div class="row-scroll" id="row-8"></div></div>
@@ -242,8 +241,8 @@
 
         var newsChannels = [
             { n: "الجزيرة", u: "https://live-hls-web-aja2-gcp.thehlive.com/AJA2/index.m3u8", t: "hls" },
-            { n: "الجزيرة مباشر", u: "https://live-hls-web-ajm-ll-bp.thehlive.com/AJM/index.m3u8" },
-            { n: "الجزيرة الوثائقية", u: "https://live-hls-web-ajm-ll-bp.thehlive.com/AJM/index.m3u8" },
+            { n: "الجزيرة مباشر", u: "https://live-hls-web-ajm-ll-bp.thehlive.com/AJM/index.m3u8", t: "hls" },
+            { n: "الجزيرة الوثائقية", u: "https://live-hls-web-ajm-ll-bp.thehlive.com/AJM/index.m3u8", t: "hls" },
             { n: "العربية", u: "https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8", t: "hls" },
             { n: "الحدث", u: "https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8", t: "hls" },
             { n: "سكاي نيوز", u: "https://stream.skynewsarabia.com/hls/sna.m3u8", t: "hls" },
@@ -285,17 +284,6 @@
             { n: "البحرين 2", u: "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8", t: "hls" },
             { n: "العراقية رياضية", u: "https://imn-live.esite-lab.com/hls/iraqia-sports-1.m3u8", t: "hls" },
             { n: "Zain TV 1", u: "https://zaintv1.zaintvpro.workers.dev/live/z1.m3u8", t: "hls" }
-        ];
-
-        var playChannels = [
-            { n: "beIN S1", u: "https://28.1yalla-shoot.space/albaplayer/live1/", t: "iframe" },
-            { n: "beIN 1", u: "https://pl.koralive1.cc/albaplayer/1bein1/?serv=0", t: "iframe" },
-            { n: "beIN 2", u: "https://23.1yallashoot.site/albaplayer/live2/", t: "iframe" },
-            { n: "match1", u: "https://912acsss8af382.fabortvcdn.com/playerv5.php?match=4741713&key=9f39972b67d6ce22189507d008acwc26", t: "iframe" },
-            { n: "Stream 1", u: "https://l.njklokkmlgfgyggfdftjugsrtdfy.dpdns.org/hls/0/stream.m3u8", t: "hls" },
-            { n: "Smarop SP", u: "https://we.smarop.store/spoos1.m3u8", t: "hls" },
-            { n: "Sigma TV", u: "https://sl3.sigmatv.com/hls/live.m3u8", t: "hls" },
-            { n: "Super TV 1", u: "https://super-livetv.pages.dev/SUPER_TV_1.m3u8", t: "hls" }
         ];
 
         var entertainmentChannels = [
@@ -392,7 +380,6 @@
             { label: 'أخبار', channels: newsChannels, special: false },
             { label: 'منوعات', channels: varietyChannels, special: false },
             { label: 'رياضة', channels: sportsChannels, special: false },
-            { label: 'وقت اللعب', channels: playChannels, special: false },
             { label: 'ترفيه', channels: entertainmentChannels, special: false },
             { label: 'الفجر', channels: fajerChannels, special: false },
             { label: 'ثمانية سبورت', channels: tamanyaSportChannels, special: false },
@@ -423,6 +410,9 @@
         var spdBtn = document.getElementById('spd-btn');
         var brightness = parseFloat(localStorage.getItem('brightness') || '0');
         brightL.style.opacity = brightness;
+
+        // ✅ البروكسي - يُمرر كل الروابط عبره
+        var PROXY = 'https://my-proxy.alameeeretv.workers.dev/?url=';
 
         var ASPECTS = [{ cls: 'fc', lbl: '↕ عادي' }, { cls: 'fv', lbl: '⛶ ملء' }, { cls: 'ff', lbl: '↔ مفيد' }];
         var aspectIdx = parseInt(localStorage.getItem('aspectIdx') || '0');
@@ -508,7 +498,6 @@
             setTimeout(function () { t.style.display = 'none'; }, 4000);
         }
 
-        // تحديث المشغل فقط بدون الخروج من الصفحة
         function reloadCurrentStream() {
             if (cur.r !== -1 && cur.i !== -1) {
                 load(cur.r, cur.i);
@@ -516,13 +505,12 @@
         }
 
         function loadHls(url, name) {
-            // ✅ تمرير روابط bein عبر البروكسي
-            if (url.indexOf('manar2.shop') !== -1) {
-                url = 'https://my-proxy.alameeeretv.workers.dev/?url=' + encodeURIComponent(url);
+            // ✅ تمرير كل الروابط عبر البروكسي
+            var alreadyProxied = url.indexOf('my-proxy.alameeeretv.workers.dev') !== -1;
+            if (!alreadyProxied) {
+                url = PROXY + encodeURIComponent(url);
             }
-            if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-                url = url.replace('http://', 'https://');
-            }
+            
             vid.style.display = 'block';
             iframeWrap.style.display = 'none';
             iframePlayer.src = '';
@@ -530,6 +518,7 @@
             if (hls) { hls.destroy(); hls = null; }
             vid.removeAttribute('src');
             vid.load();
+            
             if (Hls.isSupported()) {
                 hls = new Hls({
                     enableWorker: true,
@@ -546,7 +535,13 @@
                     fragLoadingRetryDelay: 500,
                     liveSyncDurationCount: 2,
                     liveMaxLatencyDurationCount: 4,
-                    lowLatencyMode: true
+                    lowLatencyMode: true,
+                    // ✅ تمرير كل القطع (ts/m4s) عبر البروكسي
+                    xhrSetup: function (xhr, reqUrl) {
+                        if (reqUrl.indexOf('my-proxy.alameeeretv.workers.dev') === -1) {
+                            xhr.open('GET', PROXY + encodeURIComponent(reqUrl), true);
+                        }
+                    }
                 });
                 hls.loadSource(url);
                 hls.attachMedia(vid);
