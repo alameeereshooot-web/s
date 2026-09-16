@@ -515,7 +515,18 @@
             }
         }
 
+        var HLS_PROXY = 'https://l.alameeeretv.workers.dev/?url=';
+
+        function getPlayableUrl(url) {
+            // مرّر روابط manar2 فقط عبر البروكسي، واترك بقية القنوات كما هي.
+            if (url.indexOf('://www.manar2.shop/') !== -1 || url.indexOf('://manar2.shop/') !== -1) {
+                return HLS_PROXY + encodeURIComponent(url);
+            }
+            return url;
+        }
+
         function loadHls(url, name) {
+            url = getPlayableUrl(url);
             if (window.location.protocol === 'https:' && url.startsWith('http://')) {
                 url = url.replace('http://', 'https://');
             }
