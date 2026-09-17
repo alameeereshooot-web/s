@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AlameeereTv</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        #app { display: flex; flex-direction: column; width: 100%; height: 100%; }
+
+        #player-wrap {
+            flex: 0 0 40%;
+            min-height: 200px;
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+            background: #000;
+        }
+        video { width: 100%; height: 100%; display: block; background: #000; }
+        video.fc { object-fit: contain; }
+        video.fv { object-fit: fill; }
+        video.ff { object-fit: contain; transform: scaleY(0.72); transform-origin: center center; }
+
+        #brand-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            z-index: 50;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        #brand-overlay span {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        #player-wrap.playing #brand-overlay {
+            opacity: 0;
+            z-index: -1;
+        }
+
+        #loader {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(0,0,0,.75);
+            z-index: 10;
+        }
+        #loader .wave-text {
+            color: #fff;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); text-shadow: 0 0 10px rgba(255,255,255,.4); }
+            25% { transform: translateY(-6px); text-shadow: 0 0 20px rgba(255,255,255,.8); }
+            50% { transform: translateY(0); text-shadow: 0 0 10px rgba(255,255,255,.4); }
+            75% { transform: translateY(6px); text-shadow: 0 0 20px rgba(255,255,255,.8); }
+        }
+
+        #iframe-wrap { position: absolute; inset: 0; display: none; z-index: 5; }
+        #iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+        #brightness-layer { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 4; }
+        #ch-title { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #fff; z-index: 6; display: none; }
+        #speed-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.65); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #0f0; z-index: 6; transition: opacity .3s; cursor: pointer; user-select: none; }
+        #speed-badge.hide { opacity: 0; pointer-events: none; }
+        #dbl-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 15; opacity: 0; transition: opacity .3s; }
+        #dbl-hint span { background: rgba(0,0,0,.75); color: #fff; font-size: 15px; padding: 12px 26px; border-radius: 22px; border: 1px solid rgba(255,255,255,.2); }
+        #dbl-hint.show { opacity: 1; }
+        #swipe-ind { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,.78); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; padding: 14px 22px; display: none; flex-direction: column; align-items: center; gap: 8px; z-index: 20; pointer-events: none; min-width: 130px; }
+        #si-icon { font-size: 26px; }
+        #si-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; }
+        #si-bar { height: 100%; background: #0f0; border-radius: 3px; }
+        #si-label { font-size: 12px; color: rgba(255,255,255,.75); }
+        #controls-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,.92)); padding: 30px 8px 10px; display: flex; align-items: center; gap: 4px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 100; overflow: visible; }
+        #player-wrap.show-ctrl #controls-overlay { opacity: 1; pointer-events: auto; }
+        .cb { background: rgba(255,255,255,.12); border: none; color: #fff; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 11px; backdrop-filter: blur(6px); transition: .2s; white-space: nowrap; flex-shrink: 0; }
+        .cb:hover { background: rgba(255,255,255,.28); }
+        .cb.on { background: rgba(0,200,0,.2); color: #0f0; border: 1px solid rgba(0,255,0,.3); }
+        #vw { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        #vs { -webkit-appearance: none; appearance: none; width: 48px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.3); outline: none; cursor: pointer; }
+        #vs::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #0f0; cursor: pointer; }
+        #fg { flex: 1; min-width: 2px; }
+        #qw { position: relative; flex-shrink: 0; margin-left: 6px; }
+        #qm { position: absolute; bottom: calc(100% + 8px); left: 0; background: rgba(10,10,10,.97); border: 1px solid #333; border-radius: 8px; display: none; flex-direction: column; min-width: 80px; max-height: 50vh; overflow-y: auto; z-index: 9999; box-shadow: 0 -4px 20px rgba(0,0,0,.8); }
+        #qm.open { display: flex; }
+        #qm button { background: none; border: none; color: #fff; padding: 6px 14px; cursor: pointer; text-align: center; font-size: 12px; }
+        #qm button:hover { background: rgba(255,255,255,.08); }
+        #qm button.active { color: #0f0; font-weight: 700; }
+        #q-btn.manual { background: rgba(0,200,0,.2); color: #0f0; border: 1px solid rgba(0,255,0,.35); }
+
+        #ch-rows {
+            flex: 1 1 0;
+            min-height: 0;
+            background: #030303;
+            border-top: 1px solid #111;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 2px 0;
+        }
+        .ch-row {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #0a0a0a;
+            padding: 2px 0;
+        }
+        .row-label {
+            flex-shrink: 0;
+            width: 50px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background: #050505;
+            border-left: 1px solid #111;
+        }
+        .row-label .ico { font-size: 14px; }
+        .row-label .lbl { font-size: 8px; color: #666; font-weight: 700; }
+        .row-scroll {
+            flex: 1;
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            overflow-x: auto;
+            align-items: center;
+        }
+        .row-scroll::-webkit-scrollbar { height: 3px; }
+        .row-scroll::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+        .ch {
+            min-width: 65px;
+            height: 40px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            color: #bbb;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: .2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2px;
+        }
+        .ch:hover { background: #151515; border-color: #0f0; color: #fff; }
+        .ch.on { background: #0f0; color: #000; border-color: #0f0; }
+        .ch.iframe-ch { border-color: #f80; }
+        .ch.iframe-ch.on { background: #f80; color: #000; border-color: #f80; }
+        .ch.ts-ch { border-color: #f0f; }
+        .ch.ts-ch.on { background: #f0f; color: #000; border-color: #f0f; }
+        .ch.multi-ch { border-color: #a855f7; }
+        .ch.multi-ch:hover { border-color: #c084fc; background: #1a1025; }
+        .ch.multi-ch.on { background: #a855f7; color: #000; border-color: #a855f7; }
+
+        #err-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #a00; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; display: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="err-toast"></div>
+        <div id="player-wrap">
+            <video id="vid" class="fc" playsinline webkit-playsinline></video>
+            <div id="brand-overlay"><span>AlameeereTv</span></div>
+            <div id="iframe-wrap"><iframe id="iframe-player" allowfullscreen allow="autoplay; encrypted-media" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"></iframe></div>
+            <div id="brightness-layer"></div>
+            <div id="loader"><div class="wave-text">AlameeereTv</div></div>
+            <div id="ch-title"></div>
+            <div id="speed-badge" onclick="runSpeedTest()">📡 السرعة</div>
+            <div id="swipe-ind"><div id="si-icon">🔊</div><div id="si-bar-bg"><div id="si-bar" style="width:100%"></div></div><div id="si-label">الصوت</div></div>
+            <div id="dbl-hint"><span id="dbl-txt">⛶ شاشة كاملة</span></div>
+            <div id="controls-overlay">
+                <button class="cb" onclick="togglePlay()">⏯️</button>
+                <div id="vw">
+                    <button class="cb" id="mute-btn" onclick="toggleMute()">🔊</button>
+                    <input type="range" id="vs" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)">
+                </div>
+                <button class="cb" onclick="skip(-10)">⏪</button>
+                <button class="cb" onclick="skip(10)">⏩</button>
+                <button class="cb" id="fit-btn" onclick="cycleAspect()">↕ عادي</button>
+                <button class="cb" id="spd-btn" onclick="toggleSpeed()">📡</button>
+                <button class="cb" onclick="doFullscreen()">⛶</button>
+                <div id="fg"></div>
+                <button class="cb" onclick="reloadCurrentStream()" title="إعادة تحميل البث">🔄</button>
+                <div id="qw">
+                    <button class="cb" id="q-btn" onclick="toggleQ()">جودة</button>
+                    <div id="qm"></div>
+                </div>
+            </div>
+        </div>
+        <div id="ch-rows">
+            <div class="ch-row"><div class="row-label"><span class="ico">📡</span><span class="lbl">bein</span></div><div class="row-scroll" id="row-0"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">📡</span><span class="lbl">bein متعدد</span></div><div class="row-scroll" id="row-1"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">📺</span><span class="lbl">أخبار</span></div><div class="row-scroll" id="row-2"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🎬</span><span class="lbl">منوعات</span></div><div class="row-scroll" id="row-3"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">⚽</span><span class="lbl">رياضة</span></div><div class="row-scroll" id="row-4"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🏆</span><span class="lbl">وقت اللعب</span></div><div class="row-scroll" id="row-5"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🎭</span><span class="lbl">ترفيه</span></div><div class="row-scroll" id="row-6"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🌅</span><span class="lbl">الفجر</span></div><div class="row-scroll" id="row-7"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">📡</span><span class="lbl">ثمانية سبورت</span></div><div class="row-scroll" id="row-8"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🎨</span><span class="lbl">الوان</span></div><div class="row-scroll" id="row-9"></div></div>
+            <div class="ch-row"><div class="row-label"><span class="ico">🎬</span><span class="lbl">MBC</span></div><div class="row-scroll" id="row-10"></div></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
+    <script>
+        // ===== جميع القنوات =====
+        var beinChannels = [
+            { n: "bein 1 HD", u: "https://www.manar2.shop/x1/59.m3u8", t: "hls" },
+            { n: "bein 2 HD", u: "https://www.manar2.shop/x1/60.m3u8", t: "hls" },
+            { n: "bein 3", u: "https://www.manar2.shop/x1/61.m3u8", t: "hls" },
+            { n: "bein 4", u: "https://www.manar2.shop/x1/62.m3u8", t: "hls" },
+            { n: "bein 5", u: "https://www.manar2.shop/x1/63.m3u8", t: "hls" },
+            { n: "bein 6", u: "https://www.manar2.shop/x1/64.m3u8", t: "hls" },
+            { n: "bein 7", u: "https://www.manar2.shop/x1/65.m3u8", t: "hls" },
+            { n: "bein 8", u: "https://www.manar2.shop/x1/66.m3u8", t: "hls" }
+        ];
+
+        var beinMultiChannels = [
+            { n: "bein1", u: "https://l.alameeeretv.workers.dev/?url=https%3A%2F%2Fwww.manar2.shop%2Fx1%2F65.m3u8", t: "hls" },
+            { n: "bein2", u: "https://ye-m3u8.tofi-xtv.com/_iptv/stream/621/index.m3u8", t: "hls" },
+            { n: "bein3", u: "https://ye-m3u8.tofi-xtv.com/stream/6-24-44/index.m3u8", t: "hls" },
+            { n: "bein4", u: "https://ye-m3u8.tofi-xtv.com/stream/7-24-44/index.m3u8", t: "hls" },
+            { n: "bein5", u: "https://ye-m3u8.tofi-xtv.com/stream/8-24-44/index.m3u8", t: "hls" }
+        ];
+
+        var newsChannels = [
+            { n: "الجزيرة", u: "https://live-hls-web-aja2-gcp.thehlive.com/AJA2/index.m3u8", t: "hls" },
+            { n: "الجزيرة مباشر", u: "https://live-hls-web-ajm-ll-bp.thehlive.com/AJM/index.m3u8" },
+            { n: "الجزيرة الوثائقية", u: "https://live-hls-web-ajd-gcp.thehlive.com/AJD/index.m3u8" },
+            { n: "العربية", u: "https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8", t: "hls" },
+            { n: "الحدث", u: "https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8", t: "hls" },
+            { n: "سكاي نيوز", u: "https://stream.skynewsarabia.com/hls/sna.m3u8", t: "hls" },
+            { n: "القرآن الكريم", u: "https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/index.m3u8", t: "hls" },
+            { n: "السنة النبوية", u: "https://cdn-globecast.akamaized.net/live/eds/saudi_sunnah/hls_roku/index.m3u8", t: "hls" }
+        ];
+
+        var varietyChannels = [
+            { n: "MBC 1", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-1/15cf99af5de54063fdabfefe66adc075/index.m3u8", t: "hls" },
+            { n: "MBC 2", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fcloth.orangecord.net%2Fpdf%2Fsat2MBC2%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" },
+            { n: "MBC 3", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-3-usa/5d58265a862a476dc7f97694addb5ded/index.m3u8", t: "hls" },
+            { n: "MBC 4", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-4/24f134f1cd63db9346439e96b86ca6ed/index.m3u8", t: "hls" },
+            { n: "MBC 5", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-5/ee6b000cee0629411b666ab26cb13e9b/index.m3u8", t: "hls" },
+            { n: "MBC Action", u: "https://edge66.magictvbox.com/liveApple/MBC_Action/index.m3u8", t: "hls" },
+            { n: "MBC Masr", u: "https://shd-gcp-live.lg.mncdn.com/live/bitmovin-mbc-masr/956eac069c78a35d47245db6cdbb1575/index.m3u8", t: "hls" },
+            { n: "MBC Masr+", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-usa/cd8d40acdab28aac0582faa3bd3983f1/index.m3u8", t: "hls" },
+            { n: "MBC Masr 2", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-2/754931856515075b0aabf0e583495c68/index.m3u8", t: "hls" },
+            { n: "MBC Plus Drama", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8", t: "hls" },
+            { n: "MBC Drama", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-drama/2c28a458e2f3253e678b07ac7d13fe71/index.m3u8", t: "hls" },
+            { n: "MBC Masr Drama", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-drama/567b703c19ede6598222de81b0e4508b/index.m3u8", t: "hls" },
+            { n: "MBC Iraq", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-iraq/e38c44b1b43474e1c39cb5b90203691e/index.m3u8", t: "hls" },
+            { n: "MBC Persia", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-persia/818ee8e4b592dc497608f066d825bfb4/index.m3u8", t: "hls" },
+            { n: "AD Premium 1", u: "https://www.elahmad.ru/tv/live/shahid_shaka.php?id=abudhabi_premium_1", t: "ts" },
+            { n: "AD Premium 2", u: "https://www.elahmad.ru/tv/live/shahid_shaka.php?id=abudhabi_premium_2", t: "ts" },
+            { n: "beIN Drama", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fstream.woodfencepods.com%2Fpdf%2FIC0gRg9bSFNxbAsWZmkLFRZASWV7fGg7BRceAV1GEQQ2GHcRfQ%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" },
+            { n: "OSN Action", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fcloth.orangecord.net%2Fpdf%2FOSNACTIONHD%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" }
+        ];
+
+        var sportsChannels = [
+            { n: "الكأس 1", u: "https://storage.googleapis.com/livealkass-eu/alkass1-p/main.m3u8", t: "hls" },
+            { n: "الكأس 2", u: "https://storage.googleapis.com/livealkass-eu/alkass2-p/main.m3u8", t: "hls" },
+            { n: "الكأس 3", u: "https://storage.googleapis.com/livealkass-eu/alkass3-p/main.m3u8", t: "hls" },
+            { n: "الكأس 4", u: "https://storage.googleapis.com/livealkass-eu/alkass4-p/main.m3u8", t: "hls" },
+            { n: "الكأس 5", u: "https://storage.googleapis.com/livealkass-eu/alkass5-p/main.m3u8", t: "hls" },
+            { n: "الكأس 6", u: "https://storage.googleapis.com/livealkass-eu/alkass6-p/main.m3u8", t: "hls" },
+            { n: "الكأس 7", u: "https://storage.googleapis.com/livealkass-eu/alkass7-p/main.m3u8", t: "hls" },
+            { n: "الكأس 8", u: "https://storage.googleapis.com/livealkass-eu/alkass8-p/main.m3u8", t: "hls" },
+            { n: "البحرين 1", u: "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8", t: "hls" },
+            { n: "البحرين 2", u: "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8", t: "hls" },
+            { n: "العراقية رياضية", u: "https://imn-live.esite-lab.com/hls/iraqia-sports-1.m3u8", t: "hls" },
+            { n: "Zain TV 1", u: "https://zaintv1.zaintvpro.workers.dev/live/z1.m3u8", t: "hls" }
+        ];
+
+        var playChannels = [
+            { n: "beIN S1", u: "https://28.1yalla-shoot.space/albaplayer/live1/", t: "iframe" },
+            { n: "beIN 1", u: "https://pl.koralive1.cc/albaplayer/1bein1/?serv=0", t: "iframe" },
+            { n: "beIN 2", u: "https://23.1yallashoot.site/albaplayer/live2/", t: "iframe" },
+            { n: "match1", u: "https://912acsss8af382.fabortvcdn.com/playerv5.php?match=4741713&key=9f39972b67d6ce22189507d008acwc26", t: "iframe" },
+            { n: "Stream 1", u: "https://l.njklokkmlgfgyggfdftjugsrtdfy.dpdns.org/hls/0/stream.m3u8", t: "hls" },
+            { n: "Smarop SP", u: "https://we.smarop.store/spoos1.m3u8", t: "hls" },
+            { n: "Sigma TV", u: "https://sl3.sigmatv.com/hls/live.m3u8", t: "hls" },
+            { n: "Super TV 1", u: "https://super-livetv.pages.dev/SUPER_TV_1.m3u8", t: "hls" }
+        ];
+
+        var entertainmentChannels = [
+            { n: "BeIN Movies HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/40773.ts", t: "ts" },
+            { n: "BeIN Movies HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35030.ts", t: "ts" },
+            { n: "BeIN Movies HD3", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35029.ts", t: "ts" },
+            { n: "BeIN Movies HD4", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35028.ts", t: "ts" },
+            { n: "BeIN Drama HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35026.ts", t: "ts" },
+            { n: "BeIN Series HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35024.ts", t: "ts" },
+            { n: "BeIN Series HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/176897.ts", t: "ts" },
+            { n: "BeIN AD Nat Geo HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595709.ts", t: "ts" },
+            { n: "BeIN Nat Geographic HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595705.ts", t: "ts" },
+            { n: "BeIN Nat Geo Wild HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595706.ts", t: "ts" },
+            { n: "BeIN Discovery HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56834.ts", t: "ts" },
+            { n: "BeIN Discovery Family HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56201.ts", t: "ts" },
+            { n: "BeIN BBC EARTH HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196053.ts", t: "ts" },
+            { n: "BeIN Boomerang HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35016.ts", t: "ts" },
+            { n: "BeIN فتافيت HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64588.ts", t: "ts" },
+            { n: "BeIN FOOD NETWORK HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/84845.ts", t: "ts" },
+            { n: "BeIN FOX MOVIES ACTION HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196050.ts", t: "ts" },
+            { n: "BeIN Gourmet HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64589.ts", t: "ts" },
+            { n: "BeiN HGTV (HD)", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/91888.ts", t: "ts" },
+            { n: "BeIN JEEM HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35023.ts", t: "ts" },
+            { n: "BeIN Baraem HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35025.ts", t: "ts" },
+            { n: "BEIN BOX OFFICE 1 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785558.ts", t: "ts" },
+            { n: "BEIN BOX OFFICE 2 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785557.ts", t: "ts" },
+            { n: "افلام بين اود 1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785556.ts", t: "ts" },
+            { n: "افلام بين اود 2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785555.ts", t: "ts" },
+            { n: "بين اود 3 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785554.ts", t: "ts" },
+            { n: "بين اود 4 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785553.ts", t: "ts" },
+            { n: "بين اود 5 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785552.ts", t: "ts" },
+            { n: "بين اود 6 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785551.ts", t: "ts" },
+            { n: "افلام بين اود 7", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785550.ts", t: "ts" },
+            { n: "بين اود 8 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785549.ts", t: "ts" }
+        ];
+
+        var fajerChannels = [
+            { n: "الفجر 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463532.ts", t: "ts" },
+            { n: "الفجر 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463533.ts", t: "ts" },
+            { n: "الفجر 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463534.ts", t: "ts" },
+            { n: "الفجر 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463535.ts", t: "ts" },
+            { n: "الفجر 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463536.ts", t: "ts" }
+        ];
+
+        var tamanyaSportChannels = [
+            { n: "8 الأولى", u: "https://ahm79.store/live/0545580310/7337741654/746713.m3u8?token==", t: "hls" },
+            { n: "ثمانية سبورت 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421785.ts", t: "ts" },
+            { n: "ثمانية سبورت 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421786.ts", t: "ts" },
+            { n: "ثمانية سبورت 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/429403.ts", t: "ts" },
+            { n: "الاولى", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fahm79.store%2Flive%2F0545580310%2F7337741654%2F746713.m3u8%3Ftoken%3D%3D", t: "hls" }
+        ];
+
+        var alwanChannels = [
+            { n: "الوان 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418113.ts", t: "ts" },
+            { n: "الوان 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418114.ts", t: "ts" },
+            { n: "الوان 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418115.ts", t: "ts" },
+            { n: "الوان 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418116.ts", t: "ts" },
+            { n: "الوان 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418117.ts", t: "ts" },
+            { n: "الوان 6", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418118.ts", t: "ts" },
+            { n: "الوان 7", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418119.ts", t: "ts" },
+            { n: "الوان 8", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418120.ts", t: "ts" },
+            { n: "الوان 9", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418121.ts", t: "ts" },
+            { n: "الوان 10", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418122.ts", t: "ts" },
+            { n: "الوان 11", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418123.ts", t: "ts" },
+            { n: "الوان 12", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418124.ts", t: "ts" },
+            { n: "الوان 13", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418125.ts", t: "ts" },
+            { n: "الوان 14", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418126.ts", t: "ts" },
+            { n: "الوان 15", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418127.ts", t: "ts" },
+            { n: "الوان 16", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418128.ts", t: "ts" },
+            { n: "الوان 17", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418129.ts", t: "ts" },
+            { n: "الوان 18", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418130.ts", t: "ts" },
+            { n: "الوان 19", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418131.ts", t: "ts" },
+            { n: "الوان 20", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418132.ts", t: "ts" },
+            { n: "الوان 21", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418133.ts", t: "ts" },
+            { n: "الوان 22", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418134.ts", t: "ts" }
+        ];
+
+        var mbcNewChannels = [
+            { n: "MBC 1 HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-1%2F15cf99af5de54063fdabfefe66adc075%2Findex.m3u8", t: "hls" },
+            { n: "MBC 2 HD", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fcloth.orangecord.net%2Fpdf%2Fsat2MBC2%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" },
+            { n: "MBC 3 HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-3-usa%2F5d58265a862a476dc7f97694addb5ded%2Findex.m3u8", t: "hls" },
+            { n: "MBC 4 HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-4%2F24f134f1cd63db9346439e96b86ca6ed%2Findex.m3u8", t: "hls" },
+            { n: "MBC 5 HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-5%2Fee6b000cee0629411b666ab26cb13e9b%2Findex.m3u8", t: "hls" },
+            { n: "MBC Action HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-action%2F0e5b9f7a8c3d421a9321588d92723700%2Findex.m3u8", t: "hls" },
+            { n: "MBC Drama HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-drama%2F2c28a458e2f3253e678b07ac7d13fe71%2Findex.m3u8", t: "hls" },
+            { n: "MBC Iraq HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-iraq%2Fe38c44b1b43474e1c39cb5b90203691e%2Findex.m3u8", t: "hls" },
+            { n: "MBC Masr HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.lg.mncdn.com%2Flive%2Fbitmovin-mbc-masr%2F956eac069c78a35d47245db6cdbb1575%2Findex.m3u8", t: "hls" },
+            { n: "MBC Persia HD", u: "https://auratvdz.lovable.app/api/public/stream?url=https%3A%2F%2Fshd-gcp-live.edgenextcdn.net%2Flive%2Fbitmovin-mbc-persia%2F818ee8e4b592dc497608f066d825bfb4%2Findex.m3u8", t: "hls" }
+        ];
+
+        var ROWS = [
+            { label: 'bein', channels: beinChannels, special: false },
+            { label: 'bein متعدد', channels: beinMultiChannels, special: true },
+            { label: 'أخبار', channels: newsChannels, special: false },
+            { label: 'منوعات', channels: varietyChannels, special: false },
+            { label: 'رياضة', channels: sportsChannels, special: false },
+            { label: 'وقت اللعب', channels: playChannels, special: false },
+            { label: 'ترفيه', channels: entertainmentChannels, special: false },
+            { label: 'الفجر', channels: fajerChannels, special: false },
+            { label: 'ثمانية سبورت', channels: tamanyaSportChannels, special: false },
+            { label: 'الوان', channels: alwanChannels, special: false },
+            { label: 'MBC', channels: mbcNewChannels, special: false }
+        ];
+
+        // ===== عناصر واجهة المستخدم والمتغيرات =====
+        var hls = null, cur = { r: -1, i: -1 }, retryT = null;
+        var vid = document.getElementById('vid');
+        var iframeWrap = document.getElementById('iframe-wrap');
+        var iframePlayer = document.getElementById('iframe-player');
+        var qm = document.getElementById('qm');
+        var qBtn = document.getElementById('q-btn');
+        var loader = document.getElementById('loader');
+        var chTitle = document.getElementById('ch-title');
+        var dblHint = document.getElementById('dbl-hint');
+        var dblTxt = document.getElementById('dbl-txt');
+        var swInd = document.getElementById('swipe-ind');
+        var siIcon = document.getElementById('si-icon');
+        var siBar = document.getElementById('si-bar');
+        var siLabel = document.getElementById('si-label');
+        var brightL = document.getElementById('brightness-layer');
+        var pw = document.getElementById('player-wrap');
+        var chRows = document.getElementById('ch-rows');
+        var fitBtn = document.getElementById('fit-btn');
+        var speedBadge = document.getElementById('speed-badge');
+        var spdBtn = document.getElementById('spd-btn');
+        var brightness = parseFloat(localStorage.getItem('brightness') || '0');
+        brightL.style.opacity = brightness;
+
+        var ASPECTS = [{ cls: 'fc', lbl: '↕ عادي' }, { cls: 'fv', lbl: '⛶ ملء' }, { cls: 'ff', lbl: '↔ مفيد' }];
+        var aspectIdx = parseInt(localStorage.getItem('aspectIdx') || '0');
+        function applyAspect(i) {
+            vid.className = ASPECTS[i].cls;
+            fitBtn.textContent = ASPECTS[i].lbl;
+            fitBtn.classList.toggle('on', i !== 0);
+            localStorage.setItem('aspectIdx', i);
+        }
+        function cycleAspect() {
+            aspectIdx = (aspectIdx + 1) % ASPECTS.length;
+            applyAspect(aspectIdx);
+        }
+        applyAspect(aspectIdx);
+
+        function doFullscreen() {
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                return;
+            }
+            var el = document.documentElement;
+            var p = el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : Promise.resolve();
+            Promise.resolve(p).then(function () {
+                if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () { });
+                setFullUI(true);
+            }).catch(function () { setFullUI(true); });
+        }
+        function setFullUI(isFs) {
+            if (isFs) { chRows.style.display = 'none'; }
+            else { chRows.style.display = 'flex'; if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }
+        }
+        document.addEventListener('fullscreenchange', function () { setFullUI(!!document.fullscreenElement); });
+        document.addEventListener('webkitfullscreenchange', function () { setFullUI(!!(document.fullscreenElement || document.webkitFullscreenElement)); });
+
+        var speedOn = localStorage.getItem('speedOn') !== '0';
+        var isTesting = false, speedInterval = null;
+        var TEST_URLS = ['https://httpbin.org/bytes/200000', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/240px-PNG_transparency_demonstration_1.png'];
+        var urlIdx = 0;
+        function runSpeedTest() {
+            if (isTesting) return;
+            isTesting = true;
+            speedBadge.textContent = '📡 ...';
+            var url = TEST_URLS[urlIdx % TEST_URLS.length] + '?r=' + Date.now();
+            var t0 = Date.now();
+            fetch(url, { cache: 'no-store' }).then(function (r) { return r.blob(); }).then(function (b) {
+                var elapsed = (Date.now() - t0) / 1000;
+                var bps = ((b.size || 200000) * 8) / elapsed;
+                showSpeed(bps);
+                isTesting = false;
+            }).catch(function () { urlIdx++; isTesting = false; });
+        }
+        function showSpeed(bps) {
+            var lbl = bps >= 1000000 ? '📡 ' + (bps / 1000000).toFixed(1) + ' Mbps' : '📡 ' + Math.round(bps / 1000) + ' Kbps';
+            speedBadge.textContent = lbl;
+            speedBadge.style.color = bps >= 10000000 ? '#0f0' : bps >= 2000000 ? '#ff0' : bps >= 500000 ? '#f80' : '#f44';
+        }
+        function applySpeedVis() {
+            speedBadge.classList.toggle('hide', !speedOn);
+            spdBtn.classList.toggle('on', speedOn);
+            if (speedOn) {
+                if (!speedInterval) {
+                    runSpeedTest();
+                    speedInterval = setInterval(runSpeedTest, 15000);
+                }
+            } else {
+                if (speedInterval) { clearInterval(speedInterval); speedInterval = null; }
+            }
+        }
+        function toggleSpeed() {
+            speedOn = !speedOn;
+            localStorage.setItem('speedOn', speedOn ? '1' : '0');
+            applySpeedVis();
+        }
+        applySpeedVis();
+
+        function showLoader() { loader.style.display = 'flex'; }
+        function hideLoader() { loader.style.display = 'none'; }
+        function toast(msg) {
+            var t = document.getElementById('err-toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(function () { t.style.display = 'none'; }, 4000);
+        }
+
+        // تحديث المشغل فقط بدون الخروج من الصفحة
+        function reloadCurrentStream() {
+            if (cur.r !== -1 && cur.i !== -1) {
+                load(cur.r, cur.i);
+            }
+        }
+
+        var HLS_PROXY = 'https://l.alameeeretv.workers.dev/?url=';
+        var HLS_PROXY_2 = 'https://shoot1.alameeereshooot-web.deno.dev/?url=';
+
+        function getPlayableUrl(url) {
+            // مرّر روابط manar2 فقط عبر البروكسي، واترك بقية القنوات كما هي.
+            if (url.indexOf('://www.manar2.shop/') !== -1 || url.indexOf('://manar2.shop/') !== -1) {
+                return HLS_PROXY + encodeURIComponent(url);
+            }
+            if (url.indexOf('://neorcqds.top/') !== -1 || url.indexOf('://www.neorcqds.top/') !== -1) {
+                return HLS_PROXY_2 + encodeURIComponent(url);
+            }
+            return url;
+        }
+
+        function loadHls(url, name) {
+            url = getPlayableUrl(url);
+            if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+                url = url.replace('http://', 'https://');
+            }
+            vid.style.display = 'block';
+            iframeWrap.style.display = 'none';
+            iframePlayer.src = '';
+            showLoader();
+            if (hls) { hls.destroy(); hls = null; }
+            vid.removeAttribute('src');
+            vid.load();
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    enableWorker: true,
+                    startLevel: 0,
+                    autoLevelEnabled: false,
+                    capLevelToPlayerSize: false,
+                    maxBufferLength: 10,
+                    maxMaxBufferLength: 30,
+                    maxBufferSize: 20 * 1000 * 1000,
+                    manifestLoadingMaxRetry: 4,
+                    manifestLoadingRetryDelay: 500,
+                    levelLoadingMaxRetry: 4,
+                    fragLoadingMaxRetry: 4,
+                    fragLoadingRetryDelay: 500,
+                    liveSyncDurationCount: 2,
+                    liveMaxLatencyDurationCount: 4,
+                    lowLatencyMode: true
+                });
+                hls.loadSource(url);
+                hls.attachMedia(vid);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    hls.currentLevel = 0;
+                    hls.autoLevelEnabled = false;
+                    hideLoader();
+                    pw.classList.add('playing');
+                    vid.play().catch(function () { });
+                    buildQ();
+                });
+                hls.on(Hls.Events.FRAG_BUFFERED, function () { hideLoader(); });
+                hls.on(Hls.Events.ERROR, function (e, d) {
+                    if (d.fatal) {
+                        if (d.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                            showLoader();
+                            hls.startLoad();
+                            retryT = setTimeout(function () { load(cur.r, cur.i); }, 5000);
+                        } else if (d.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                            hls.recoverMediaError();
+                        } else {
+                            retryT = setTimeout(function () { load(cur.r, cur.i); }, 5000);
+                        }
+                    }
+                });
+            } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+                vid.src = url;
+                vid.addEventListener('loadeddata', function () { hideLoader(); pw.classList.add('playing'); }, { once: true });
+                vid.play().catch(function () { });
+            } else {
+                hideLoader();
+                toast('المتصفح غير متوافق');
+            }
+        }
+
+        function buildChannels() {
+            ROWS.forEach(function (row, ri) {
+                var box = document.getElementById('row-' + ri);
+                if (!box) return;
+                box.innerHTML = '';
+                row.channels.forEach(function (c, ci) {
+                    var b = document.createElement('button');
+                    var cls = 'ch';
+                    if (c.t === 'iframe') cls += ' iframe-ch';
+                    if (c.t === 'ts') cls += ' ts-ch';
+                    if (row.special) cls += ' multi-ch';
+                    b.className = cls;
+                    b.textContent = c.n;
+                    b.id = 'ch-' + ri + '-' + ci;
+                    b.onclick = function () { load(ri, ci); };
+                    box.appendChild(b);
+                });
+            });
+        }
+
+        function openWithMPV(url) {
+            var rawUrl = url;
+            var cleanUrl = url.replace(/^https?:\/\//, '');
+            var ua = navigator.userAgent;
+
+            var isAndroid = /Android/i.test(ua);
+            var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+            if (isAndroid) {
+                var androidIntents = [
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;action=android.intent.action.VIEW;end',
+                    'mpv://' + cleanUrl,
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=is.xyz.mpv;action=android.intent.action.VIEW;end',
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=info.t4w.vp;action=android.intent.action.VIEW;end',
+                    'vlc://' + cleanUrl,
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=org.videolan.vlc;action=android.intent.action.VIEW;end',
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=com.mxtech.videoplayer.ad;action=android.intent.action.VIEW;end'
+                ];
+
+                var idx = 0;
+                function tryAndroidIntent() {
+                    if (idx >= androidIntents.length) {
+                        toast('تعذر فتح المشغل، يرجى التأكد من تثبيت مشغل فيديو على جهازك');
+                        return;
+                    }
+                    var target = androidIntents[idx++];
+                    window.location.href = target;
+
+                    setTimeout(function() {
+                        if (!document.hidden) {
+                            tryAndroidIntent();
+                        }
+                    }, 600);
+                }
+                tryAndroidIntent();
+
+            } else if (isIOS) {
+                var encodedUrl = encodeURIComponent(rawUrl);
+                var primaryUrl = 'vlc-x-callback://x-callback-url/stream?url=' + encodedUrl;
+                
+                try {
+                    window.location.href = primaryUrl;
+                } catch (e) {
+                    toast('يرجى التأكد من تثبيت تطبيق VLC أو Outplayer من App Store');
+                }
+
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        toast('لم يتم فتح المشغل، هل تطبيق VLC مثبت لديك؟');
+                    }
+                }, 2000);
+
+            } else {
+                var pcProtocols = [
+                    'potplayer://' + rawUrl,
+                    'vlc://' + rawUrl,
+                    'mpv://' + cleanUrl
+                ];
+
+                var pcIdx = 0;
+                function tryPCProtocol() {
+                    if (pcIdx >= pcProtocols.length) {
+                        toast('تعذر فتح المشغل، يرجى تثبيت PotPlayer أو VLC على جهازك');
+                        return;
+                    }
+                    var target = pcProtocols[pcIdx++];
+                    window.location.href = target;
+
+                    setTimeout(function() {
+                        if (!document.hidden) {
+                            tryPCProtocol();
+                        }
+                    }, 700);
+                }
+                tryPCProtocol();
+            }
+        }
+
+        function load(ri, ci) {
+            if (ri < 0 || ri >= ROWS.length || ci < 0 || ci >= ROWS[ri].channels.length) return;
+            cur = { r: ri, i: ci };
+            if (retryT) { clearTimeout(retryT); retryT = null; }
+            document.querySelectorAll('.ch').forEach(function (b) { b.classList.remove('on'); });
+            var btn = document.getElementById('ch-' + ri + '-' + ci);
+            if (btn) btn.classList.add('on');
+            var ch = ROWS[ri].channels[ci];
+            chTitle.textContent = ch.n;
+            chTitle.style.display = 'block';
+            var type = ch.t || 'hls';
+
+            if (type === 'ts') {
+                openWithMPV(ch.u);
+                return;
+            }
+
+            if (type === 'iframe') {
+                if (hls) { hls.destroy(); hls = null; }
+                vid.style.display = 'none';
+                iframeWrap.style.display = 'block';
+                pw.classList.add('playing');
+                showLoader();
+                iframePlayer.src = '';
+                setTimeout(function () { iframePlayer.src = ch.u; hideLoader(); }, 400);
+                qm.innerHTML = '';
+                return;
+            }
+
+            loadHls(ch.u, ch.n);
+        }
+
+        function buildQ() {
+            qm.innerHTML = '';
+            if (!hls) return;
+            var lvls = hls.levels;
+            if (!lvls || !lvls.length) return;
+            var a = document.createElement('button');
+            a.textContent = 'تلقائي';
+            a.onclick = function () {
+                hls.currentLevel = -1;
+                hls.autoLevelEnabled = true;
+                qBtn.classList.remove('manual');
+                updateQActive();
+                closeQ();
+            };
+            qm.appendChild(a);
+            lvls.forEach(function (lv, i) {
+                var b = document.createElement('button');
+                var lbl = lv.height ? lv.height + 'p' : Math.round(lv.bitrate / 1000) + 'k';
+                b.textContent = lbl;
+                b.onclick = function () {
+                    hls.autoLevelEnabled = false;
+                    hls.currentLevel = i;
+                    qBtn.classList.add('manual');
+                    updateQActive();
+                    closeQ();
+                };
+                qm.appendChild(b);
+            });
+            updateQActive();
+        }
+        function updateQActive() {
+            if (!hls) return;
+            var btns = qm.querySelectorAll('button');
+            btns.forEach(function (b, i) {
+                if (i === 0) b.classList.toggle('active', hls.currentLevel === -1);
+                else b.classList.toggle('active', hls.currentLevel === (i - 1));
+            });
+        }
+        function closeQ() { qm.classList.remove('open'); }
+        function toggleQ() {
+            if (!hls && !qm.innerHTML) { return; }
+            qm.classList.toggle('open');
+            if (qm.classList.contains('open')) updateQActive();
+        }
+        function togglePlay() { vid.paused ? vid.play() : vid.pause(); }
+        function toggleMute() {
+            vid.muted = !vid.muted;
+            document.getElementById('mute-btn').textContent = vid.muted ? '🔇' : '🔊';
+            document.getElementById('vs').value = vid.muted ? 0 : vid.volume;
+        }
+        function setVolume(v) {
+            vid.volume = parseFloat(v);
+            vid.muted = v == 0;
+            document.getElementById('mute-btn').textContent = v == 0 ? '🔇' : '🔊';
+            document.getElementById('vs').value = v;
+            localStorage.setItem('vol', v);
+        }
+        function skip(s) { vid.currentTime += s; }
+
+        var swType = null, swStartY = 0, swStartVal = 0, swTimer = null, isSwiping = false, tyStart = 0;
+        function showSwipe(type, val) {
+            clearTimeout(swTimer);
+            if (type === 'vol') {
+                siIcon.textContent = '🔊';
+                siLabel.textContent = 'الصوت ' + Math.round(val * 100) + '%';
+                siBar.style.width = (val * 100) + '%';
+                siBar.style.background = '#0f0';
+            } else {
+                siIcon.textContent = '☀️';
+                siLabel.textContent = 'الإضاءة ' + Math.round((1 - val / 0.85) * 100) + '%';
+                siBar.style.width = ((1 - val / 0.85) * 100) + '%';
+                siBar.style.background = '#fbbf24';
+            }
+            swInd.style.display = 'flex';
+            swTimer = setTimeout(function () { swInd.style.display = 'none'; }, 1200);
+        }
+
+        var lastTap = 0, dblTimer = null, dblHintTimer = null;
+        function showDblHint(txt) {
+            dblTxt.textContent = txt;
+            dblHint.classList.add('show');
+            clearTimeout(dblHintTimer);
+            dblHintTimer = setTimeout(function () { dblHint.classList.remove('show'); }, 1500);
+        }
+        var hideCtrlT = null;
+
+        document.addEventListener('touchend', function (e) {
+            if (e.target.closest('#controls-overlay') || e.target.closest('#ch-rows') || e.target.closest('#qm') || e.target.closest('#speed-badge') || e.target.closest('#iframe-wrap')) return;
+            if (isSwiping) return;
+            var now = Date.now();
+            if (now - lastTap < 400 && lastTap > 0) {
+                lastTap = 0;
+                clearTimeout(dblTimer);
+                dblTimer = null;
+                doFullscreen();
+                showDblHint('⛶ شاشة كاملة');
+            } else {
+                lastTap = now;
+                clearTimeout(dblTimer);
+                if (e.target.closest('#player-wrap')) {
+                    dblTimer = setTimeout(function () {
+                        lastTap = 0;
+                        pw.classList.add('show-ctrl');
+                        clearTimeout(hideCtrlT);
+                        hideCtrlT = setTimeout(function () { pw.classList.remove('show-ctrl'); }, 3000);
+                    }, 400);
+                }
+            }
+        }, { passive: true });
+
+        pw.addEventListener('touchstart', function (e) {
+            if (e.target.closest('#controls-overlay') || e.target.closest('#loader') || e.target.closest('#speed-badge') || e.target.closest('#iframe-wrap')) return;
+            var t = e.touches[0];
+            tyStart = t.clientY;
+            isSwiping = false;
+            var rect = pw.getBoundingClientRect();
+            swType = (t.clientX - rect.left) > (rect.width / 2) ? 'vol' : 'brightness';
+            swStartY = t.clientY;
+            swStartVal = swType === 'vol' ? vid.volume : brightness;
+        }, { passive: true });
+
+        pw.addEventListener('touchmove', function (e) {
+            if (!swType || e.target.closest('#controls-overlay') || e.target.closest('#iframe-wrap')) return;
+            var t = e.touches[0];
+            var dy = tyStart - t.clientY;
+            if (!isSwiping && Math.abs(dy) > 12) isSwiping = true;
+            if (!isSwiping) return;
+            var delta = dy / pw.getBoundingClientRect().height;
+            if (swType === 'vol') {
+                var v = Math.max(0, Math.min(1, swStartVal + delta));
+                setVolume(v);
+                showSwipe('vol', v);
+            } else {
+                var b = Math.max(0, Math.min(0.85, swStartVal - delta));
+                brightness = b;
+                brightL.style.opacity = b;
+                localStorage.setItem('brightness', b);
+                showSwipe('brightness', b);
+            }
+        }, { passive: true });
+
+        pw.addEventListener('touchend', function () {
+            swType = null;
+            setTimeout(function () { isSwiping = false; }, 50);
+        }, { passive: true });
+
+        pw.addEventListener('click', function (e) {
+            if (e.target.closest('#controls-overlay') || e.target.closest('#loader') || e.target.closest('#speed-badge') || e.target.closest('#iframe-wrap')) return;
+            pw.classList.add('show-ctrl');
+            clearTimeout(hideCtrlT);
+            hideCtrlT = setTimeout(function () { pw.classList.remove('show-ctrl'); }, 3000);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#qw')) closeQ();
+        });
+
+        var sv = localStorage.getItem('vol');
+        if (sv) {
+            vid.volume = parseFloat(sv);
+            document.getElementById('vs').value = sv;
+        }
+
+        buildChannels();
+        load(0, 0);
+    </script>
+</body>
+</html>
