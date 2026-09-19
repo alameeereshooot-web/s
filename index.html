@@ -22,18 +22,6 @@
         video.fv { object-fit: fill; }
         video.ff { object-fit: contain; transform: scaleY(0.72); transform-origin: center center; }
 
-        /* ===== وضع الشاشة الكاملة ===== */
-        #player-wrap.fs {
-            flex: 1 1 100% !important;
-            height: 100dvh;
-            min-height: 100dvh;
-            padding: 0;
-        }
-        #player-wrap.fs video {
-            height: 100%;
-            width: 100%;
-        }
-
         #brand-overlay {
             position: absolute;
             inset: 0;
@@ -245,9 +233,9 @@
         ];
 
         var beinMultiChannels = [
-            { n: "bein1", u: "http://neorcqds.top:8080/live/7851740326546692/ad453617508e/25106.m3u8", t: "hls" },
-            { n: "bein2", u: "https://ye-m3u8.tofi-xtv.com/_iptv/stream/621/index.m3u8", t: "hls" },
-            { n: "bein3", u: "http://2756d46c.akciatv.ru/iptv/7FRNF6CY9A9TG3/6123/index.m3u8", t: "hls" },
+            { n: "bein1", u: "https://ye-m3u8.tofi-xtv.com/stream/4-24-44/index.m3u8", t: "hls" },
+            { n: "bein2", u: "https://ye-m3u8.tofi-xtv.com/stream/5-24-44/index.m3u8", t: "hls" },
+            { n: "bein3", u: "https://ye-m3u8.tofi-xtv.com/stream/6-24-44/index.m3u8", t: "hls" },
             { n: "bein4", u: "https://ye-m3u8.tofi-xtv.com/stream/7-24-44/index.m3u8", t: "hls" },
             { n: "bein5", u: "https://ye-m3u8.tofi-xtv.com/stream/8-24-44/index.m3u8", t: "hls" }
         ];
@@ -278,6 +266,8 @@
             { n: "MBC Masr Drama", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-drama/567b703c19ede6598222de81b0e4508b/index.m3u8", t: "hls" },
             { n: "MBC Iraq", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-iraq/e38c44b1b43474e1c39cb5b90203691e/index.m3u8", t: "hls" },
             { n: "MBC Persia", u: "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-persia/818ee8e4b592dc497608f066d825bfb4/index.m3u8", t: "hls" },
+            { n: "AD Premium 1", u: "https://www.elahmad.ru/tv/live/shahid_shaka.php?id=abudhabi_premium_1", t: "ts" },
+            { n: "AD Premium 2", u: "https://www.elahmad.ru/tv/live/shahid_shaka.php?id=abudhabi_premium_2", t: "ts" },
             { n: "beIN Drama", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fstream.woodfencepods.com%2Fpdf%2FIC0gRg9bSFNxbAsWZmkLFRZASWV7fGg7BRceAV1GEQQ2GHcRfQ%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" },
             { n: "OSN Action", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fcloth.orangecord.net%2Fpdf%2FOSNACTIONHD%2Findex.m3u8%3Ftoken%3D%3D", t: "hls" }
         ];
@@ -309,78 +299,78 @@
         ];
 
         var entertainmentChannels = [
-            { n: "BeIN Movies HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/40773.ts", t: "hls" },
-            { n: "BeIN Movies HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35030.ts", t: "hls" },
-            { n: "BeIN Movies HD3", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35029.ts", t: "hls" },
-            { n: "BeIN Movies HD4", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35028.ts", t: "hls" },
-            { n: "BeIN Drama HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35026.ts", t: "hls" },
-            { n: "BeIN Series HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35024.ts", t: "hls" },
-            { n: "BeIN Series HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/176897.ts", t: "hls" },
-            { n: "BeIN AD Nat Geo HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595709.ts", t: "hls" },
-            { n: "BeIN Nat Geographic HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595705.ts", t: "hls" },
-            { n: "BeIN Nat Geo Wild HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595706.ts", t: "hls" },
-            { n: "BeIN Discovery HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56834.ts", t: "hls" },
-            { n: "BeIN Discovery Family HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56201.ts", t: "hls" },
-            { n: "BeIN BBC EARTH HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196053.ts", t: "hls" },
-            { n: "BeIN Boomerang HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35016.ts", t: "hls" },
-            { n: "BeIN فتافيت HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64588.ts", t: "hls" },
-            { n: "BeIN FOOD NETWORK HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/84845.ts", t: "hls" },
-            { n: "BeIN FOX MOVIES ACTION HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196050.ts", t: "hls" },
-            { n: "BeIN Gourmet HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64589.ts", t: "hls" },
-            { n: "BeiN HGTV (HD)", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/91888.ts", t: "hls" },
-            { n: "BeIN JEEM HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35023.ts", t: "hls" },
-            { n: "BeIN Baraem HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35025.ts", t: "hls" },
-            { n: "BEIN BOX OFFICE 1 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785558.ts", t: "hls" },
-            { n: "BEIN BOX OFFICE 2 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785557.ts", t: "hls" },
-            { n: "افلام بين اود 1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785556.ts", t: "hls" },
-            { n: "افلام بين اود 2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785555.ts", t: "hls" },
-            { n: "بين اود 3 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785554.ts", t: "hls" },
-            { n: "بين اود 4 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785553.ts", t: "hls" },
-            { n: "بين اود 5 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785552.ts", t: "hls" },
-            { n: "بين اود 6 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785551.ts", t: "hls" },
-            { n: "افلام بين اود 7", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785550.ts", t: "hls" },
-            { n: "بين اود 8 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785549.ts", t: "hls" }
+            { n: "BeIN Movies HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/40773.ts", t: "ts" },
+            { n: "BeIN Movies HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35030.ts", t: "ts" },
+            { n: "BeIN Movies HD3", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35029.ts", t: "ts" },
+            { n: "BeIN Movies HD4", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35028.ts", t: "ts" },
+            { n: "BeIN Drama HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35026.ts", t: "ts" },
+            { n: "BeIN Series HD1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35024.ts", t: "ts" },
+            { n: "BeIN Series HD2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/176897.ts", t: "ts" },
+            { n: "BeIN AD Nat Geo HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595709.ts", t: "ts" },
+            { n: "BeIN Nat Geographic HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595705.ts", t: "ts" },
+            { n: "BeIN Nat Geo Wild HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/595706.ts", t: "ts" },
+            { n: "BeIN Discovery HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56834.ts", t: "ts" },
+            { n: "BeIN Discovery Family HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/56201.ts", t: "ts" },
+            { n: "BeIN BBC EARTH HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196053.ts", t: "ts" },
+            { n: "BeIN Boomerang HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35016.ts", t: "ts" },
+            { n: "BeIN فتافيت HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64588.ts", t: "ts" },
+            { n: "BeIN FOOD NETWORK HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/84845.ts", t: "ts" },
+            { n: "BeIN FOX MOVIES ACTION HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/196050.ts", t: "ts" },
+            { n: "BeIN Gourmet HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/64589.ts", t: "ts" },
+            { n: "BeiN HGTV (HD)", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/91888.ts", t: "ts" },
+            { n: "BeIN JEEM HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35023.ts", t: "ts" },
+            { n: "BeIN Baraem HD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/35025.ts", t: "ts" },
+            { n: "BEIN BOX OFFICE 1 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785558.ts", t: "ts" },
+            { n: "BEIN BOX OFFICE 2 FHD", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785557.ts", t: "ts" },
+            { n: "افلام بين اود 1", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785556.ts", t: "ts" },
+            { n: "افلام بين اود 2", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785555.ts", t: "ts" },
+            { n: "بين اود 3 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785554.ts", t: "ts" },
+            { n: "بين اود 4 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785553.ts", t: "ts" },
+            { n: "بين اود 5 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785552.ts", t: "ts" },
+            { n: "بين اود 6 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785551.ts", t: "ts" },
+            { n: "افلام بين اود 7", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785550.ts", t: "ts" },
+            { n: "بين اود 8 افلام", u: "http://vip2.sharkhost.xyz/live/9143315182/7352465335/785549.ts", t: "ts" }
         ];
 
         var fajerChannels = [
-            { n: "الفجر 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463532.ts", t: "hls" },
-            { n: "الفجر 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463533.ts", t: "hls" },
-            { n: "الفجر 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463534.ts", t: "hls" },
-            { n: "الفجر 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463535.ts", t: "hls" },
-            { n: "الفجر 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463536.ts", t: "hls" }
+            { n: "الفجر 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463532.ts", t: "ts" },
+            { n: "الفجر 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463533.ts", t: "ts" },
+            { n: "الفجر 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463534.ts", t: "ts" },
+            { n: "الفجر 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463535.ts", t: "ts" },
+            { n: "الفجر 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/463536.ts", t: "ts" }
         ];
 
         var tamanyaSportChannels = [
             { n: "8 الأولى", u: "https://ahm79.store/live/0545580310/7337741654/746713.m3u8?token==", t: "hls" },
-            { n: "ثمانية سبورت 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421785.ts", t: "hls" },
-            { n: "ثمانية سبورت 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421786.ts", t: "hls" },
-            { n: "ثمانية سبورت 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/429403.ts", t: "hls" },
+            { n: "ثمانية سبورت 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421785.ts", t: "ts" },
+            { n: "ثمانية سبورت 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/421786.ts", t: "ts" },
+            { n: "ثمانية سبورت 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/429403.ts", t: "ts" },
             { n: "الاولى", u: "https://auratvdz.lovable.app/api/public/stream?url=http%3A%2F%2Fahm79.store%2Flive%2F0545580310%2F7337741654%2F746713.m3u8%3Ftoken%3D%3D", t: "hls" }
         ];
 
         var alwanChannels = [
-            { n: "الوان 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418113.ts", t: "hls" },
-            { n: "الوان 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418114.ts", t: "hls" },
-            { n: "الوان 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418115.ts", t: "hls" },
-            { n: "الوان 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418116.ts", t: "hls" },
-            { n: "الوان 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418117.ts", t: "hls" },
-            { n: "الوان 6", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418118.ts", t: "hls" },
-            { n: "الوان 7", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418119.ts", t: "hls" },
-            { n: "الوان 8", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418120.ts", t: "hls" },
-            { n: "الوان 9", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418121.ts", t: "hls" },
-            { n: "الوان 10", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418122.ts", t: "hls" },
-            { n: "الوان 11", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418123.ts", t: "hls" },
-            { n: "الوان 12", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418124.ts", t: "hls" },
-            { n: "الوان 13", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418125.ts", t: "hls" },
-            { n: "الوان 14", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418126.ts", t: "hls" },
-            { n: "الوان 15", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418127.ts", t: "hls" },
-            { n: "الوان 16", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418128.ts", t: "hls" },
-            { n: "الوان 17", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418129.ts", t: "hls" },
-            { n: "الوان 18", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418130.ts", t: "hls" },
-            { n: "الوان 19", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418131.ts", t: "hls" },
-            { n: "الوان 20", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418132.ts", t: "hls" },
-            { n: "الوان 21", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418133.ts", t: "hls" },
-            { n: "الوان 22", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418134.ts", t: "hls" }
+            { n: "الوان 1", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418113.ts", t: "ts" },
+            { n: "الوان 2", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418114.ts", t: "ts" },
+            { n: "الوان 3", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418115.ts", t: "ts" },
+            { n: "الوان 4", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418116.ts", t: "ts" },
+            { n: "الوان 5", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418117.ts", t: "ts" },
+            { n: "الوان 6", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418118.ts", t: "ts" },
+            { n: "الوان 7", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418119.ts", t: "ts" },
+            { n: "الوان 8", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418120.ts", t: "ts" },
+            { n: "الوان 9", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418121.ts", t: "ts" },
+            { n: "الوان 10", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418122.ts", t: "ts" },
+            { n: "الوان 11", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418123.ts", t: "ts" },
+            { n: "الوان 12", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418124.ts", t: "ts" },
+            { n: "الوان 13", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418125.ts", t: "ts" },
+            { n: "الوان 14", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418126.ts", t: "ts" },
+            { n: "الوان 15", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418127.ts", t: "ts" },
+            { n: "الوان 16", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418128.ts", t: "ts" },
+            { n: "الوان 17", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418129.ts", t: "ts" },
+            { n: "الوان 18", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418130.ts", t: "ts" },
+            { n: "الوان 19", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418131.ts", t: "ts" },
+            { n: "الوان 20", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418132.ts", t: "ts" },
+            { n: "الوان 21", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418133.ts", t: "ts" },
+            { n: "الوان 22", u: "http://185.191.126.127:8080/live//b0:99:d7:15:88:50/3090914536649669/418134.ts", t: "ts" }
         ];
 
         var mbcNewChannels = [
@@ -462,14 +452,8 @@
             }).catch(function () { setFullUI(true); });
         }
         function setFullUI(isFs) {
-            if (isFs) {
-                chRows.style.display = 'none';
-                pw.classList.add('fs');
-            } else {
-                chRows.style.display = 'flex';
-                pw.classList.remove('fs');
-                if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
-            }
+            if (isFs) { chRows.style.display = 'none'; }
+            else { chRows.style.display = 'flex'; if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }
         }
         document.addEventListener('fullscreenchange', function () { setFullUI(!!document.fullscreenElement); });
         document.addEventListener('webkitfullscreenchange', function () { setFullUI(!!(document.fullscreenElement || document.webkitFullscreenElement)); });
@@ -524,31 +508,14 @@
             setTimeout(function () { t.style.display = 'none'; }, 4000);
         }
 
+        // تحديث المشغل فقط بدون الخروج من الصفحة
         function reloadCurrentStream() {
             if (cur.r !== -1 && cur.i !== -1) {
                 load(cur.r, cur.i);
             }
         }
 
-        var HLS_PROXY   = 'https://l.alameeeretv.workers.dev/?url=';
-        var HLS_PROXY_2 = 'https://sho.alameeereshooot-web.deno.net/?url=';
-
-        function getPlayableUrl(url) {
-            if (url.indexOf('sharkhost.xyz') !== -1 ||
-                url.indexOf('akciatv.ru') !== -1 ||
-                url.indexOf('neorcqds.top') !== -1 ||
-                url.indexOf('185.191.126.127') !== -1 ||
-                url.indexOf('elahmad.ru') !== -1) {
-                return HLS_PROXY_2 + encodeURIComponent(url);
-            }
-            if (url.indexOf('manar2.shop') !== -1) {
-                return HLS_PROXY + encodeURIComponent(url);
-            }
-            return url;
-        }
-
         function loadHls(url, name) {
-            url = getPlayableUrl(url);
             if (window.location.protocol === 'https:' && url.startsWith('http://')) {
                 url = url.replace('http://', 'https://');
             }
@@ -631,6 +598,84 @@
             });
         }
 
+        function openWithMPV(url) {
+            var rawUrl = url;
+            var cleanUrl = url.replace(/^https?:\/\//, '');
+            var ua = navigator.userAgent;
+
+            var isAndroid = /Android/i.test(ua);
+            var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+            if (isAndroid) {
+                var androidIntents = [
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;action=android.intent.action.VIEW;end',
+                    'mpv://' + cleanUrl,
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=is.xyz.mpv;action=android.intent.action.VIEW;end',
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=info.t4w.vp;action=android.intent.action.VIEW;end',
+                    'vlc://' + cleanUrl,
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=org.videolan.vlc;action=android.intent.action.VIEW;end',
+                    'intent://' + cleanUrl + '#Intent;scheme=http;type=video/*;package=com.mxtech.videoplayer.ad;action=android.intent.action.VIEW;end'
+                ];
+
+                var idx = 0;
+                function tryAndroidIntent() {
+                    if (idx >= androidIntents.length) {
+                        toast('تعذر فتح المشغل، يرجى التأكد من تثبيت مشغل فيديو على جهازك');
+                        return;
+                    }
+                    var target = androidIntents[idx++];
+                    window.location.href = target;
+
+                    setTimeout(function() {
+                        if (!document.hidden) {
+                            tryAndroidIntent();
+                        }
+                    }, 600);
+                }
+                tryAndroidIntent();
+
+            } else if (isIOS) {
+                var encodedUrl = encodeURIComponent(rawUrl);
+                var primaryUrl = 'vlc-x-callback://x-callback-url/stream?url=' + encodedUrl;
+                
+                try {
+                    window.location.href = primaryUrl;
+                } catch (e) {
+                    toast('يرجى التأكد من تثبيت تطبيق VLC أو Outplayer من App Store');
+                }
+
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        toast('لم يتم فتح المشغل، هل تطبيق VLC مثبت لديك؟');
+                    }
+                }, 2000);
+
+            } else {
+                var pcProtocols = [
+                    'potplayer://' + rawUrl,
+                    'vlc://' + rawUrl,
+                    'mpv://' + cleanUrl
+                ];
+
+                var pcIdx = 0;
+                function tryPCProtocol() {
+                    if (pcIdx >= pcProtocols.length) {
+                        toast('تعذر فتح المشغل، يرجى تثبيت PotPlayer أو VLC على جهازك');
+                        return;
+                    }
+                    var target = pcProtocols[pcIdx++];
+                    window.location.href = target;
+
+                    setTimeout(function() {
+                        if (!document.hidden) {
+                            tryPCProtocol();
+                        }
+                    }, 700);
+                }
+                tryPCProtocol();
+            }
+        }
+
         function load(ri, ci) {
             if (ri < 0 || ri >= ROWS.length || ci < 0 || ci >= ROWS[ri].channels.length) return;
             cur = { r: ri, i: ci };
@@ -642,6 +687,11 @@
             chTitle.textContent = ch.n;
             chTitle.style.display = 'block';
             var type = ch.t || 'hls';
+
+            if (type === 'ts') {
+                openWithMPV(ch.u);
+                return;
+            }
 
             if (type === 'iframe') {
                 if (hls) { hls.destroy(); hls = null; }
