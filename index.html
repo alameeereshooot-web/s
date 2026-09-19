@@ -515,19 +515,11 @@
             }
         }
 
-        var HLS_PROXY   = 'https://l.alameeeretv.workers.dev/?url=';
-        var HLS_PROXY_2 = 'https://sho.alameeereshooot-web.deno.net/?url=';
+        var HLS_PROXY = 'https://l.alameeeretv.workers.dev/?url=';
 
         function getPlayableUrl(url) {
-            // الحسابات الجديدة (sharkhost / akciatv / neorcqds) عبر بروكسي Deno،
-            // manar2 عبر كلاودفلير، وباقي القنوات كما هي.
-            if (url.indexOf('sharkhost.xyz') !== -1 ||
-                url.indexOf('akciatv.ru') !== -1 ||
-                url.indexOf('neorcqds.top') !== -1) {
-                return HLS_PROXY_2 + encodeURIComponent(url);
-            }
-            if (url.indexOf('://www.manar2.shop/') !== -1 ||
-                url.indexOf('://manar2.shop/') !== -1) {
+            // مرّر روابط manar2 فقط عبر البروكسي، واترك بقية القنوات كما هي.
+            if (url.indexOf('://www.manar2.shop/') !== -1 || url.indexOf('://manar2.shop/') !== -1) {
                 return HLS_PROXY + encodeURIComponent(url);
             }
             return url;
