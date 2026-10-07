@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>الأفلام والمسلسلات</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-<!-- مكتبات المشغل -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1/dist/mpegts.js"></script>
@@ -13,7 +12,6 @@
 *{box-sizing:border-box}
 body{margin:0;background:#000;color:#fff;font-family:Cairo,sans-serif;overflow-x:hidden}
 
-/* ===== الهيدر والقوائم ===== */
 header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-bottom:1px solid #222}
 .tabs{display:flex;gap:6px;margin-bottom:8px}
 .tabs button{flex:1;padding:9px;border:0;border-radius:10px;background:#111;color:#aaa;font:700 15px Cairo;cursor:pointer}
@@ -24,21 +22,18 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 #cats button{white-space:nowrap;padding:6px 12px;border-radius:20px;border:1px solid #333;background:#0a0a0a;color:#ccc;font:13px Cairo;cursor:pointer}
 #cats button.on{background:#fff;color:#000}
 
-/* ===== شبكة الأفلام ===== */
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:10px}
 .card{background:#111;border-radius:10px;padding:12px;min-height:70px;cursor:pointer;font-size:14px;font-weight:700;border:1px solid #1d1d1d;transition:.2s}
 .card:hover{background:#1a1a1a;border-color:#dc2626}
 .card small{display:block;color:#888;font-weight:400;margin-top:4px}
 #more{display:block;margin:10px auto 30px;padding:10px 24px;border:0;border-radius:10px;background:#222;color:#fff;font:700 14px Cairo;cursor:pointer}
 
-/* ===== المشغل المنبثق ===== */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10;display:none;overflow:auto;padding:0}
 .modal.on{display:block}
 .modal-close{position:fixed;top:10px;left:10px;z-index:20;background:#222;border:0;color:#fff;font-size:20px;border-radius:50%;width:36px;height:36px;cursor:pointer}
 .modal-header{padding:10px 12px;background:#000;border-bottom:1px solid #222;padding-left:60px}
 .modal-header h3{margin:0;font-size:15px;color:#fff}
 
-/* ===== منطقة المشغل ===== */
 #player-wrap{position:relative;width:100%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:220px}
 #player-wrap.fullscreen-fallback{position:fixed;inset:0;z-index:100;width:100vw;height:100vh}
 #vid{width:100%;max-height:70vh;background:#000;display:block;object-fit:contain}
@@ -52,7 +47,6 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 #loader::after{content:"";width:44px;height:44px;border:4px solid #333;border-top-color:#dc2626;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== أزرار التحكم العائمة ===== */
 .ctrl-bar{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:#0a0a0a;border-top:1px solid #222}
 .ctrl-bar button{flex:1;min-width:70px;padding:9px;border:0;border-radius:8px;background:#222;color:#fff;font:700 13px Cairo;cursor:pointer}
 .ctrl-bar button.on{background:#dc2626}
@@ -63,7 +57,6 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 #qm button:hover{background:#222}
 #qm button.on{background:#dc2626}
 
-/* ===== التنبيهات ===== */
 #err-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#dc2626;color:#fff;padding:10px 16px;border-radius:8px;font:700 13px Cairo;display:none;z-index:999;max-width:90%;text-align:center}
 #dbl-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.85);padding:10px 16px;border-radius:8px;font:700 14px Cairo;opacity:0;transition:.2s;pointer-events:none;z-index:6}
 #dbl-hint.show{opacity:1}
@@ -73,12 +66,10 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 #si-bar-track{width:100%;height:6px;background:#333;border-radius:3px;overflow:hidden}
 #si-bar{height:100%;width:0;background:#38bdf8;transition:width .1s}
 
-/* ===== أزرار خارجية ===== */
 .acts{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:#0a0a0a}
 .acts a,.acts button{flex:1;min-width:80px;text-align:center;padding:9px;border-radius:8px;border:0;background:#222;color:#fff;text-decoration:none;font:700 13px Cairo;cursor:pointer}
 .acts a:hover,.acts button:hover{background:#333}
 
-/* ===== المواسم والحلقات ===== */
 .seas{display:flex;gap:6px;overflow-x:auto;margin:10px 12px;scrollbar-width:none}
 .seas::-webkit-scrollbar{display:none}
 .seas button{padding:6px 14px;border-radius:8px;border:0;background:#222;color:#fff;font:13px Cairo;white-space:nowrap;cursor:pointer}
@@ -97,7 +88,6 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 </header>
 <div id="grid"></div><button id="more" onclick="draw(true)">عرض المزيد</button>
 
-<!-- ===== المشغل المنبثق الشامل ===== -->
 <div class="modal" id="md">
   <button class="modal-close" onclick="closeM()">✕</button>
   <div class="modal-header"><h3 id="ch-title"></h3></div>
@@ -115,7 +105,6 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
     </div>
   </div>
 
-  <!-- أزرار التحكم -->
   <div class="ctrl-bar">
     <button id="fit-btn" onclick="cycleAspect()">↕ عادي</button>
     <button id="q-btn" onclick="toggleQ()">🎚 الجودة</button>
@@ -123,16 +112,13 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
     <button onclick="doFullscreen()">⛶ ملء</button>
   </div>
 
-  <!-- قائمة الجودات -->
   <div id="quality-wrap" style="padding:0 12px">
     <div id="qm"></div>
   </div>
 
-  <!-- المواسم والحلقات -->
   <div id="seas" class="seas"></div>
   <div id="eps" class="eps"></div>
 
-  <!-- روابط خارجية -->
   <div class="acts">
     <a id="vlc">VLC</a>
     <a id="mx">MX Player</a>
@@ -147,23 +133,19 @@ header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-botto
 /* ============================================================
    إعدادات البروكسي
    ============================================================ */
-var PROXY = 'https://l.alameeeretv.workers.dev/?url=';
+var PROXY = 'https://m.alameeeretv.workers.dev/?url=';
 
 /**
  * يمرر الرابط عبر البروكسي عند الحاجة فقط
- * - الموقع HTTPS والرابط HTTP → مرّره عبر البروكسي
- * - خلاف ذلك → استخدم الرابط مباشرة
+ * ملاحظة: البروكسي يقبل الرابط بدون encodeURIComponent
  */
 function applyProxy(u){
   if(!u) return u;
   var isHttps = location.protocol === 'https:';
   var isHttpUrl = u.indexOf('http://') === 0;
-
-  // إذا كان الموقع HTTPS والرابط HTTP → نمرّره
   if(isHttps && isHttpUrl){
-    // إذا كان مضافاً للبروكسي مسبقاً، لا تكرره
-    if(u.indexOf('l.alameeeretv.workers.dev') !== -1) return u;
-    return PROXY + encodeURIComponent(u);
+    if(u.indexOf('alameeeretv.workers.dev') !== -1) return u;
+    return PROXY + u;
   }
   return u;
 }
@@ -351,23 +333,19 @@ async function loadDash(url, clearkeyConfig){
   if(!shaka.Player.isBrowserSupported()){ hideLoader(); toast('المتصفح لا يدعم DASH'); return; }
 
   shakaPlayer = new shaka.Player(vid);
-
   var drmConfig = {};
   if(clearkeyConfig && Object.keys(clearkeyConfig).length > 0){
     drmConfig.clearKeys = clearkeyConfig;
   }
-
   shakaPlayer.configure({
     drm: drmConfig,
     manifest: { dash: { ignoreDrmInfo: true } },
     streaming: { bufferingGoal: 10, rebufferingGoal: 2 }
   });
-
   shakaPlayer.addEventListener('error', function(event){
     console.error('Shaka error:', event.detail);
     toast('خطأ DASH: ' + (event.detail && event.detail.message ? event.detail.message : 'مشكلة في البث'));
   });
-
   try{
     await shakaPlayer.load(url);
     hideLoader();
@@ -377,7 +355,7 @@ async function loadDash(url, clearkeyConfig){
   }catch(e){
     hideLoader();
     console.error('Failed DASH:', e);
-    toast('تعذر فك تشفير أو تشغيل DASH');
+    toast('تعذر تشغيل DASH');
   }
 }
 
@@ -408,15 +386,12 @@ async function loadTs(url){
     autoCleanupMaxBackwardDuration: 60,
     autoCleanupMinBackwardDuration: 30
   });
-
   tsPlayer.attachMediaElement(vid);
   tsPlayer.load();
-
   vid.addEventListener('playing', function(){
     hideLoader();
     pw.classList.add('playing');
   }, { once: true });
-
   tsPlayer.play().catch(function(e){ console.log('Autoplay TS:', e); });
   tsPlayer.on(mpegts.Events.ERROR, function(type, detail, info){
     console.error('TS Error:', type, detail, info);
@@ -487,7 +462,7 @@ function loadMp4(url){
     }, { once: true });
     vid.addEventListener('error', function(){
       hideLoader();
-      toast('خطأ في تشغيل MP4');
+      toast('خطأ في تشغيل MP4 — جرب VLC أو MX Player');
     }, { once: true });
     vid.play().catch(function(){});
   });
@@ -509,12 +484,10 @@ function loadIframe(url){
 function play(originalUrl){
   cur = originalUrl;
 
-  // إخفاء المواسم والحلقات
   document.getElementById('seas').innerHTML = '';
   document.getElementById('eps').innerHTML = '';
   document.getElementById('qm').innerHTML = '';
 
-  // أزرار خارجية: تستخدم الرابط الأصلي (بدون بروكسي) لأن VLC/MX يدعمان HTTP
   var dl = document.getElementById('dl');
   var vlc = document.getElementById('vlc');
   var mx = document.getElementById('mx');
@@ -522,7 +495,6 @@ function play(originalUrl){
   if(vlc) vlc.href = 'vlc://' + originalUrl;
   if(mx) mx.href = 'intent:' + originalUrl + '#Intent;package=com.mxtech.videoplayer.ad;type=video/*;end';
 
-  // تحديد النوع
   var type = 'hls';
   if(/\.mpd(\?|$)/i.test(originalUrl)) type = 'dash';
   else if(/\.mp4(\?|$)/i.test(originalUrl)) type = 'mp4';
@@ -532,7 +504,6 @@ function play(originalUrl){
   else if(originalUrl.indexOf('.mp4') !== -1) type = 'mp4';
   else if(originalUrl.indexOf('.ts') !== -1) type = 'ts';
 
-  // تطبيق البروكسي للروابط HTTP على موقع HTTPS
   var proxiedUrl = applyProxy(originalUrl);
 
   if(type === 'dash') loadDash(proxiedUrl);
