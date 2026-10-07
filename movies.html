@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الأفلام والمسلسلات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#000;color:#fff;font-family:Cairo,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#000;padding:10px;border-bottom:1px solid #222}
+.tabs{display:flex;gap:6px;margin-bottom:8px}.tabs button{flex:1;padding:9px;border:0;border-radius:10px;background:#111;color:#aaa;font:700 15px Cairo}
+.tabs button.on{background:#dc2626;color:#fff}
+#q{width:100%;padding:9px 12px;border-radius:10px;border:1px solid #222;background:#0a0a0a;color:#fff;font:14px Cairo}
+#cats{display:flex;gap:6px;overflow-x:auto;padding:8px 0 0;scrollbar-width:none}#cats::-webkit-scrollbar{display:none}
+#cats button{white-space:nowrap;padding:6px 12px;border-radius:20px;border:1px solid #333;background:#0a0a0a;color:#ccc;font:13px Cairo}
+#cats button.on{background:#fff;color:#000}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:10px}
+.card{background:#111;border-radius:10px;padding:12px;min-height:70px;cursor:pointer;font-size:14px;font-weight:700;border:1px solid #1d1d1d}
+.card small{display:block;color:#888;font-weight:400;margin-top:4px}
+#more{display:block;margin:10px auto 30px;padding:10px 24px;border:0;border-radius:10px;background:#222;color:#fff;font:700 14px Cairo}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10;display:none;overflow:auto;padding:12px}
+.modal.on{display:block}.x{float:left;background:#222;border:0;color:#fff;font-size:20px;border-radius:50%;width:36px;height:36px}
+video{width:100%;max-height:60vh;background:#000;border-radius:8px;margin-top:8px}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.acts a,.acts button{flex:1;text-align:center;padding:9px;border-radius:8px;border:0;background:#222;color:#fff;text-decoration:none;font:700 13px Cairo}
+.seas{display:flex;gap:6px;overflow-x:auto;margin:10px 0}.seas button{padding:6px 14px;border-radius:8px;border:0;background:#222;color:#fff;font:13px Cairo}.seas button.on{background:#dc2626}
+.eps{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}.eps button{padding:10px;border:0;border-radius:8px;background:#151515;color:#fff;font:700 14px Cairo}
+.eps button.on{background:#dc2626}
+</style>
+</head>
+<body>
+<header>
+<div class="tabs"><button id="tm" class="on" onclick="tab('m')">أفلام</button><button id="ts" onclick="tab('s')">مسلسلات</button></div>
+<input id="q" placeholder="ابحث...">
+<div id="cats"></div>
+</header>
+<div id="grid"></div><button id="more" onclick="draw(true)">عرض المزيد</button>
+
+<div class="modal" id="md"><button class="x" onclick="closeM()">✕</button><h3 id="mt"></h3>
+<div id="seas" class="seas"></div><div id="eps" class="eps"></div>
+<video id="v" controls playsinline></video>
+<div class="acts"><a id="vlc">VLC</a><a id="mx">MX Player</a><button onclick="navigator.clipboard.writeText(cur);this.textContent='تم النسخ'">نسخ الرابط</button><a id="dl" target="_blank">رابط مباشر</a></div>
+</div>
+
+<script>
+const BASE='http://so.ta2al.us:80/', U='MH12ARBMH12', P='MH12ARBMH12';
+const D={m:null,s:null}; let T='m',C='__all',list=[],shown=0,cur='',hls;
+const url=(k,id)=>`${BASE}${k==='m'?'movie':'series'}/${U}/${P}/${id}.mp4`;
+async function load(k){if(!D[k])D[k]=await (await fetch(k==='m'?'movies.json':'series.json')).json();return D[k]}
+async function tab(k){T=k;C='__all';tm.className=k==='m'?'on':'';ts.className=k==='s'?'on':'';grid.innerHTML='<p style="padding:20px">جاري التحميل...</p>';
+ const d=await load(k);cats.innerHTML='';
+ const mk=(n,c)=>{const b=document.createElement('button');b.textContent=n;b.className=c===C?'on':'';b.onclick=()=>{C=c;[...cats.children].forEach(x=>x.className='');b.className='on';build()};cats.appendChild(b)};
+ mk('الكل','__all');Object.keys(d).forEach(c=>mk(`${c} (${T==='m'?d[c].length:Object.keys(d[c]).length})`,c));build()}
+function build(){const d=D[T],q=q_.value.trim().toLowerCase(),cs=C==='__all'?Object.keys(d):[C];list=[];const seen=new Set();
+ for(const c of cs){if(T==='m')d[c].forEach(([t,id])=>{if(!seen.has(id)&&(!q||t.toLowerCase().includes(q))){seen.add(id);list.push({t,id,c})}});
+  else for(const n in d[c]){const key=n;if(seen.has(key))continue;if(!q||n.toLowerCase().includes(q)){seen.add(key);list.push({t:n,eps:d[c][n],c})}}}
+ shown=0;grid.innerHTML='';draw()}
+function draw(){const part=list.slice(shown,shown+120);shown+=part.length;
+ part.forEach(it=>{const e=document.createElement('div');e.className='card';e.innerHTML=`${esc(it.t)}<small>${it.eps?it.eps.length+' حلقة':esc(it.c)}</small>`;e.onclick=()=>open_(it);grid.appendChild(e)});
+ more.style.display=shown<list.length?'block':'none';if(!list.length)grid.innerHTML='<p style="padding:20px">لا توجد نتائج</p>'}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function open_(it){md.classList.add('on');mt.textContent=it.t;seas.innerHTML='';eps.innerHTML='';
+ if(!it.eps){play(url('m',it.id));return}
+ const S={};it.eps.forEach(([s,e,id])=>(S[s]=S[s]||[]).push([e,id]));
+ Object.keys(S).sort((a,b)=>a-b).forEach((s,i)=>{const b=document.createElement('button');b.textContent='الموسم '+s;b.onclick=()=>{[...seas.children].forEach(x=>x.className='');b.className='on';showEps(S[s].sort((a,b)=>a[0]-b[0]))};seas.appendChild(b);if(!i)b.click()})}
+function showEps(arr){eps.innerHTML='';arr.forEach(([e,id])=>{const b=document.createElement('button');b.textContent=e;b.onclick=()=>{[...eps.children].forEach(x=>x.className='');b.className='on';play(url('s',id))};eps.appendChild(b)})}
+function play(u){cur=u;dl.href=u;vlc.href='vlc://'+u;mx.href='intent:'+u+'#Intent;package=com.mxtech.videoplayer.ad;type=video/*;end';
+ if(hls){hls.destroy();hls=null}
+ // ملاحظة: المتصفح على https قد يمنع روابط http؛ عندها استخدم VLC أو MX
+ if(Hls.isSupported()&&/m3u8/.test(u)){hls=new Hls();hls.loadSource(u);hls.attachMedia(v)}else v.src=u;v.play().catch(()=>{})}
+function closeM(){md.classList.remove('on');v.pause();v.removeAttribute('src');v.load();if(hls){hls.destroy();hls=null}}
+const q_=document.getElementById('q');let tmr;q_.oninput=()=>{clearTimeout(tmr);tmr=setTimeout(build,250)};
+tab('m');
+</script>
+</body>
+</html>
